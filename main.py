@@ -7,10 +7,10 @@ configuration = []
 
 def configure():
     global configuration
-    if len(sys.argv)==1 or sys.argv[1]=='-p':
-        systemname='https://api.pro.coinbase.com'
+    if len(sys.argv) == 1 or sys.argv[1] == '-p':
+        systemname = 'https://api.pro.coinbase.com'
     else:
-        systemname= 'https://public.sandbox.pro.coinbase.com'
+        systemname = 'https://public.sandbox.pro.coinbase.com'
     if os.path.exists(filename := ('{}{}{}'.format(os.getcwd(), os.sep, 'conf.yaml'))):
         configuration = yaml.load(open(filename, 'r'))
     if len(configuration) == 0 or len([x['data']['name'] == systemname for x in configuration]):
@@ -22,10 +22,15 @@ def configure():
         system['data']['passphrase'] = input('passphrase:')
         configuration.append(system)
         yaml.dump(configuration, open(filename, 'w'))
+    else:
+        system = [x['data']['name'] == systemname for x in configuration][0]
+    configuration = system
 
 
 def main():
     configure()
+
+
 #    client=cbpro.Auth
 if __name__ == '__main__':
     main()
