@@ -29,6 +29,7 @@ def configure():
 
 def main():
     configure()
+    # TODO start threads for controllers once created
 
 
 #    client=cbpro.Auth
