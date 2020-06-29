@@ -5,6 +5,9 @@ __pycache__/
 
 # Config Files
 *.yaml
+.ropeproject/
+.vim/
+.__pycache__/
 
 # C extensions
 *.so
