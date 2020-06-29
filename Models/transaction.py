@@ -1,3 +1,6 @@
+import sys
+
+
 class Transaction:
     id = None
     base_currency = None
@@ -6,5 +9,6 @@ class Transaction:
     quote_value = None
     fee = None
     rate = None
-    def __init__(self, base_currency, quote_currency, id, **kwargs):
+
+    def __init__(self, id, base_currency, quote_currency, **kwargs):
         pass
