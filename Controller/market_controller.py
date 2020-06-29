@@ -36,12 +36,10 @@ def on_close(ws):
 
 def on_open(ws):
     def run(*args):
-        for i in range(1):
-            time.sleep(1)
-            body = {'type': 'subscribe',
-                    'product_ids': [x.id for x in products],
-                    'channels': [{'name': 'ticker'}]}
-            ws.send(fuck_json.to_json(body))
+        body = {'type': 'subscribe',
+                'product_ids': [x.id for x in products],
+                'channels': [{'name': 'ticker'}]}
+        ws.send(fuck_json.to_json(body))
         # time.sleep(1)
         # ws.close()
         print("thread terminating...")
