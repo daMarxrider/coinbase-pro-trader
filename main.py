@@ -7,6 +7,7 @@ import time
 import Controller.market_controller as market
 from Controller import client_controller as cli
 import Controller.wallet_controller as wallet
+import Controller.history_controller as history
 configuration = []
 
 
@@ -37,16 +38,20 @@ def configure():
 
 def main():
     configure()
-    wallet.init_wallets()
+    wallet.get_wallets()
+    for w in wallet.wallets:
+        print(w)
     # TODO start threads for controllers once created
     products = market.products
     thread.start_new_thread(market.get_products_feed, ())
-   # for i in range(10):
-   #     print('new values:')
-   #     for product in products:
-   #         if product.id == "ETH-EUR":
-   #             print(product.rate)
-   #     time.sleep(10)
+    for i in range(10):
+        print('new values:')
+        for product in products:
+            # print(product.rate)
+            print(product)
+        time.sleep(1)
+    history.get_history()
+
     while 1:
         # threads keep running, but this prevents the script from closing without using a shitty framework
         time.sleep(3600)
