@@ -2,6 +2,7 @@ import cbpro
 import os
 import sys
 import yaml
+import Controller.market_controller as market
 configuration = []
 
 
@@ -10,7 +11,7 @@ def configure():
     if len(sys.argv) == 1 or sys.argv[1] == '-p':
         systemname = 'https://api.pro.coinbase.com'
     else:
-        systemname = 'https://public.sandbox.pro.coinbase.com'
+        systemname = 'https://api-public.sandbox.pro.coinbase.com'
     if os.path.exists(filename := ('{}{}{}'.format(os.getcwd(), os.sep, 'conf.yaml'))):
         configuration = yaml.load(open(filename, 'r'))
     if len(configuration) == 0 or len([x['data']['name'] == systemname for x in configuration]):
@@ -30,6 +31,7 @@ def configure():
 def main():
     configure()
     # TODO start threads for controllers once created
+    market.get_products()
 
 
 #    client=cbpro.Auth
