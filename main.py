@@ -5,6 +5,8 @@ import yaml
 import _thread as thread
 import time
 import Controller.market_controller as market
+from Controller import client_controller as cli
+import Controller.wallet_controller as wallet
 configuration = []
 
 
@@ -27,14 +29,16 @@ def configure():
         configuration.append(system)
         yaml.dump(configuration, open(filename, 'w'))
     else:
-        system = [x['system']['name'] == systemname for x in configuration][0]
+        system = [x for x in configuration if x['system']
+                  ['name'] == systemname][0]
     configuration = system
+    cli.setup_client(configuration)
 
 
 def main():
     configure()
+    wallet.init_wallets()
     # TODO start threads for controllers once created
-    #products = market.get_products()
     products = market.products
     thread.start_new_thread(market.get_products_feed, ())
    # for i in range(10):
@@ -48,6 +52,5 @@ def main():
         time.sleep(3600)
 
 
-#    client=cbpro.Auth
 if __name__ == '__main__':
     main()

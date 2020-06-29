@@ -51,7 +51,7 @@ def on_open(ws):
 def init_products():
     global products
     if len(products) == 0:
-        for product in client.init_products():
+        for product in client.get_products():
             products.append(Product(
                 id=product['id'], base_currency=product['base_currency'], quote_currency=product['quote_currency']))
     return products
