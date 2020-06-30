@@ -8,15 +8,20 @@ import Controller.market_controller as market
 from Controller import client_controller as cli
 import Controller.wallet_controller as wallet
 import Controller.history_controller as history
+import Algorithms.Prediction.cross_market_evaluation.cross_market_evaluation as algorithm
+from datetime import datetime as fucking_date
+import datetime
 configuration = []
 
 
 def configure():
     global configuration
-    if len(sys.argv) == 1 or sys.argv[1] == '-p':
-        systemname = 'https://api.pro.coinbase.com'
+    if len(sys.argv) == 1 or sys.argv[1] == 'prod':
+        systemname = 'prod'
+        systemuri = 'https://api.pro.coinbase.com'
     else:
-        systemname = 'https://api-public.sandbox.pro.coinbase.com'
+        systemname = sys.argv[1]
+        systemuri = 'https://api-public.sandbox.pro.coinbase.com'
     if os.path.exists(filename := ('{}{}{}'.format(os.getcwd(), os.sep, 'conf.yaml'))):
         configuration = yaml.load(open(filename, 'r'), Loader=yaml.FullLoader)
         print(configuration)
@@ -24,6 +29,7 @@ def configure():
         system = {}
         system['system'] = {}
         system['system']['name'] = systemname
+        system['system']['uri'] = systemuri
         system['system']['api_key'] = input('api_key:')
         system['system']['secret_key'] = input('secret_key:')
         system['system']['passphrase'] = input('passphrase:')
@@ -51,7 +57,8 @@ def main():
     # print(product)
     # time.sleep(1)
     # history.get_history()
-    thread.start_new_thread(history.get_history, ())
+    thread.start_new_thread(history.get_history, (algorithm.setup,))
+    thread.start_new_thread(algorithm.setup, ())
     while 1:
         # threads keep running, but this prevents the script from closing without using a shitty framework
         time.sleep(3600)

@@ -17,7 +17,7 @@ def on_ticker_message(ws, message):
     try:
         message = json.loads(message)
         # print(message)
-        # print(message['price'])
+        #print('{}:{}'.format(message['product_id'], message['price']))
         [x for x in products if x.id == message['product_id']
          ][0].rate = message['price']
     except Exception as e:
@@ -66,17 +66,6 @@ def get_products_feed():
     ws.run_forever()
 
 
-def get_orders(product):
-    # TODO
-    pass
-
-
 def get_transactions(days=0):
     # TODO
     pass
-
-
-def get_rate(product):
-    pass
-    # TODO listen for websocket (see coinbasepro-python/blob/master/cbpro/public-client.py)
-    # at get_product_ticker
