@@ -22,5 +22,5 @@ def get_wallets():
             quote_currency = order['product_id'].split(
                 '-')[0] if order['side'] == 'sell' else order['product_id'].split('-')[1]
             orders.append(Transaction(
-                order['id'], base_currency, quote_currency, fee=order['fill_fees'], base_amount=amount, quote_amount=order['size'], rate=order['price']))
+                order['id'], base_currency, quote_currency, fee=order['fill_fees'], base_value=amount, quote_value=order['size'], rate=order['price']))
     return wallets, orders

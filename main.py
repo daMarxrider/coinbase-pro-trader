@@ -44,14 +44,14 @@ def main():
     # TODO start threads for controllers once created
     products = market.products
     thread.start_new_thread(market.get_products_feed, ())
-    for i in range(10):
-        print('new values:')
-        for product in products:
-            # print(product.rate)
-            print(product)
-        time.sleep(1)
-    history.get_history()
-
+    # for i in range(10):
+    #print('new values:')
+    # for product in products:
+    # print(product.rate)
+    # print(product)
+    # time.sleep(1)
+    # history.get_history()
+    thread.start_new_thread(history.get_history, ())
     while 1:
         # threads keep running, but this prevents the script from closing without using a shitty framework
         time.sleep(3600)
