@@ -1,5 +1,6 @@
 from Controller import client_controller
 from Models.transaction import Transaction
+from Controller import market_controller as market
 
 wallets = []
 orders = []
@@ -23,4 +24,6 @@ def get_wallets():
                 '-')[0] if order['side'] == 'sell' else order['product_id'].split('-')[1]
             orders.append(Transaction(
                 order['id'], base_currency, quote_currency, fee=order['fill_fees'], base_value=amount, quote_value=order['size'], rate=order['price']))
+            print([x for x in market.products if x.id ==
+                   order['product_id']])  # [0].own_orders.append(orders[-1])
     return wallets, orders
