@@ -11,6 +11,7 @@ from Models.transaction import Transaction
 client = cbpro.PublicClient()
 products = []
 
+
 def on_ticker_message(ws, message):
     global products
     try:
@@ -25,10 +26,11 @@ def on_ticker_message(ws, message):
             '-')[0] if message['side'] == 'sell' else message['product_id'].split('-')[1]
         [x for x in products if x.id == message['product_id']
          ][0].public_transactions.append(Transaction(
-            message['trade_id'], base_currency, quote_currency, rate=message['price']))
+             message['trade_id'], base_currency, quote_currency, rate=message['price']))
     except Exception as e:
-        print(e)
-        print(message)
+        pass
+        # print(e)
+        # print(message)
 
 
 def on_error(ws, error):
