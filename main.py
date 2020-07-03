@@ -50,13 +50,6 @@ def main():
     # TODO start threads for controllers once created
     products = market.products
     thread.start_new_thread(market.get_products_feed, ())
-    # for i in range(10):
-    #print('new values:')
-    # for product in products:
-    # print(product.rate)
-    # print(product)
-    # time.sleep(1)
-    # history.get_history()
     thread.start_new_thread(history.get_history, (algorithm.setup,))
     thread.start_new_thread(algorithm.setup, ())
     while 1:

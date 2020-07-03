@@ -1,15 +1,22 @@
 from Controller import client_controller
 from Controller import market_controller as market
+from Models.product import Product
 from datetime import datetime as fucking_date
 import datetime
 import time
+import sys
 
 product_history = []
+
+#TODO
+product_current_data=[]
+product_complete_data=[]
+
 client = None
 
 
 def get_history(f=None):
-    global client, product_history
+    global client, product_history,product_current_data,product_complete_data
 
     # from docs
     # [ time, low, high, open, close, volume  ],
@@ -47,21 +54,27 @@ def get_history(f=None):
                     p_history[0]['data'].extend(data)
             except Exception as e:
                 print('exception')
-                print(e)
+                exc_type, exc_obj, tb = sys.exc_info()
+                f = tb.tb_frame
+                lineno = tb.tb_lineno
+                filename = f.f_code.co_filename
+                print('Exception at {} line {}'.format(filename, lineno))
             try:
                 print('newest date in {}\n{}'.format(product.id,
                                                      fucking_date.fromtimestamp(p_history[0]['data'][-1][0])))
                 product.historic_rates = p_history[0]['data']
             except Exception as e:
-                print('fuck {}'.format(product.id))
                 try:
                     print('newest date in {}\n{}'.format(product.id,
                                                          fucking_date.fromtimestamp(p_history['data'][-1][0])))
                     product.historic_rates = p_history['data']
-                    pass
                 except Exception as e:
-                    print('and fuck it hard')
-                #print('fucking fuck\n {}\n can suck my fucking cock'.format(p_history))
+                    print('exception')
+                    exc_type, exc_obj, tb = sys.exc_info()
+                    f = tb.tb_frame
+                    lineno = tb.tb_lineno
+                    filename = f.f_code.co_filename
+                    print('Exception at {} line {}'.format(filename,lineno))
             time.sleep(.5)
         print('history')
         print([x['id']+'{}'.format(len(x['data'])) for x in product_history])
