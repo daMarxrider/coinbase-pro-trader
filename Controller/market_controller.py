@@ -6,20 +6,26 @@ import json
 import sys
 from Controller import fuck_json
 from Models.product import Product
+from Models.transaction import Transaction
 
 client = cbpro.PublicClient()
 products = []
 
-
-# TODO extract into own class and set new values with function references
 def on_ticker_message(ws, message):
     global products
     try:
         message = json.loads(message)
         # print(message)
-        # print(message['price'])
+        #print('{}:{}'.format(message['product_id'], message['price']))
         [x for x in products if x.id == message['product_id']
          ][0].rate = message['price']
+        base_currency = message['product_id'].split(
+            '-')[1] if message['side'] == 'buy' else message['product_id'].split('-')[0]
+        quote_currency = message['product_id'].split(
+            '-')[0] if message['side'] == 'sell' else message['product_id'].split('-')[1]
+        [x for x in products if x.id == message['product_id']
+         ][0].public_transactions.append(Transaction(
+            message['trade_id'], base_currency, quote_currency, rate=message['price']))
     except Exception as e:
         print(e)
         print(message)
@@ -66,17 +72,6 @@ def get_products_feed():
     ws.run_forever()
 
 
-def get_orders(product):
-    # TODO
-    pass
-
-
 def get_transactions(days=0):
     # TODO
     pass
-
-
-def get_rate(product):
-    pass
-    # TODO listen for websocket (see coinbasepro-python/blob/master/cbpro/public-client.py)
-    # at get_product_ticker

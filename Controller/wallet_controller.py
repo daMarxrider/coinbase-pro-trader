@@ -1,5 +1,6 @@
 from Controller import client_controller
 from Models.transaction import Transaction
+from Controller import market_controller as market
 
 wallets = []
 orders = []

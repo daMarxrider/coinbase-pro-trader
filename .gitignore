@@ -8,6 +8,7 @@ __pycache__/
 .ropeproject/
 .vim/
 .__pycache__/
+.vimspector.json
 
 # C extensions
 *.so
