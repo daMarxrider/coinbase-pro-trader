@@ -15,10 +15,12 @@ class Product():
     amount = None
     own_transactions = []
     public_transactions = []
+    mfi = 0
+    rsi=0
 
     def __init__(self, id,
                  base_currency=None, quote_currency=None, own_orders=None, public_orders=None,
-                 amount=None, own_transactions=None, public_transactions=[], historic_rates=[]):
+                 amount=None, own_transactions=None, public_transactions=[], historic_rates=[], mfi=0,rsi=0):
         self.id = id
         self.base_currency = base_currency
         self.quote_currency = quote_currency
@@ -26,6 +28,8 @@ class Product():
         self.public_orders = public_orders
         self.amount = amount
         self.public_transactions = public_transactions
+        self.mfi = mfi
+        self.rsi=rsi
 
     def calculate_rate(self):
         # TODO

@@ -6,6 +6,22 @@ wallets = []
 orders = []
 client = None
 
+def buy(product):
+    for order in orders:
+        if order.status=='open' and order.id==product.id:
+            return
+    funds=[x for x in wallets if x['currency']==product.id.split('-')[1]][0]['available']
+    client.buy(product.id,'buy','market',funds=funds)
+    pass#TODO
+
+def sell(product):
+    for order in orders:
+        if order.status=='open' and order.id==product.id:
+            return
+    funds=[x for x in wallets if x['currency']==product.id.split('-')[0]][0]['available']
+    client.sell(product.id,'sell','market',funds=funds)
+    pass#TODO
+
 
 def get_wallets():
     global wallets, orders, client
@@ -21,7 +37,7 @@ def get_wallets():
             base_currency = order['product_id'].split(
                 '-')[1] if order['side'] == 'buy' else order['product_id'].split('-')[0]
             quote_currency = order['product_id'].split(
-                '-')[0] if order['side'] == 'sell' else order['product_id'].split('-')[1]
+                '-')[1] if order['side'] == 'sell' else order['product_id'].split('-')[0]
             orders.append(Transaction(
-                order['id'], base_currency, quote_currency, fee=order['fill_fees'], base_value=amount, quote_value=order['size'], rate=order['price']))
+                order['id'], base_currency, quote_currency, fee=order['fill_fees'], base_value=amount, quote_value=order['size'], rate=order['price'],status=order['status']))
     return wallets, orders

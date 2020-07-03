@@ -9,6 +9,7 @@ from Controller import client_controller as cli
 import Controller.wallet_controller as wallet
 import Controller.history_controller as history
 import Algorithms.Prediction.cross_market_evaluation.cross_market_evaluation as algorithm
+import Algorithms.Trading.rsi_based as rsi
 from datetime import datetime as fucking_date
 import datetime
 configuration = []
@@ -52,6 +53,7 @@ def main():
     thread.start_new_thread(market.get_products_feed, ())
     thread.start_new_thread(history.get_history, (algorithm.setup,))
     thread.start_new_thread(algorithm.setup, ())
+    thread.start_new_thread(rsi.setup, ())
     while 1:
         # threads keep running, but this prevents the script from closing without using a shitty framework
         time.sleep(3600)

@@ -24,19 +24,14 @@ def setup():
                             [x for x in evaluated_products if x.id ==
                                 p_history['id']][0].create_dependents()
                     except:
-                        print('exception')
-                        exc_type, exc_obj, tb = sys.exc_info()
-                        f = tb.tb_frame
-                        lineno = tb.tb_lineno
-                        filename = f.f_code.co_filename
-                        print('Exception at {} line {}'.format(filename,lineno))
+                        pass
         except Exception as e:
             print('exception')
             exc_type, exc_obj, tb = sys.exc_info()
             f = tb.tb_frame
             lineno = tb.tb_lineno
             filename = f.f_code.co_filename
-            print('Exception at {} line {}'.format(filename,lineno))
+            print('Exception at {} line {}'.format(filename, lineno))
 
 
 class EvaluatedProduct(object):
@@ -44,6 +39,7 @@ class EvaluatedProduct(object):
     p_ref = None
     dependencies = []
     highest_mimicry = None
+    # TODO set cheapest_route to euro
     cheapest_route = []
 
     def __init__(self, p_id, dependencies=[]):
@@ -61,7 +57,8 @@ class EvaluatedProduct(object):
             def mapper(slot, mimics):
                 diff = None
                 for mimic in mimics:
-                    if mimic is None: continue
+                    if mimic is None:
+                        continue
                     if diff == None or abs(slot[0] - mimic[0]) < diff:
                         diff = abs(slot[0] - mimic[0])
                     else:
@@ -75,21 +72,22 @@ class EvaluatedProduct(object):
                     continue
                 mimic_results = []
                 for slot in slots:
-                    mimic=mapper(slot, dep_product['data'])
-                    if mimic is None:continue
+                    mimic = mapper(slot, dep_product['data'])
+                    if mimic is None:
+                        continue
                     mimic_results.append(
                         (mimic[4]/mimic[3])/(slot[4]/slot[3]))
 
-                print(mimic_results)
+                # print(mimic_results)
                 mimicry = statistics.pstdev(mimic_results)
-                print(mimicry)
+                # print(mimicry)
                 if mimicry < 0.1:
-                    if len(id:=([x for x in self.dependencies if x['id']==dep_product['id']]))==0:
+                    if len(id := ([x for x in self.dependencies if x['id'] == dep_product['id']])) == 0:
                         self.dependencies.append(
                             {'id': dep_product['id'], 'value': mimicry})
                     else:
                         # index=self.dependencies.index((id))
-                        id[0]['value']= mimicry
+                        id[0]['value'] = mimicry
             for dep in self.dependencies:
                 if self.highest_mimicry is None or self.highest_mimicry['value'] > dep['value']:
                     self.highest_mimicry = dep

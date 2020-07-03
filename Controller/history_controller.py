@@ -4,19 +4,20 @@ from Models.product import Product
 from datetime import datetime as fucking_date
 import datetime
 import time
+import statistics
 import sys
 
 product_history = []
 
-#TODO
-product_current_data=[]
-product_complete_data=[]
+# TODO
+product_current_data = []
+product_complete_data = []
 
 client = None
 
 
 def get_history(f=None):
-    global client, product_history,product_current_data,product_complete_data
+    global client, product_history, product_current_data, product_complete_data
 
     # from docs
     # [ time, low, high, open, close, volume  ],
@@ -30,52 +31,70 @@ def get_history(f=None):
                     x for x in product_history if x['id'] == product.id]
             else:
                 p_history = []
-            try:
-                start_date = fucking_date.now() - \
-                    datetime.timedelta(336) if len(
-                        p_history) == 0 else fucking_date.fromtimestamp(p_history[0]['data'][-1][0])
-                end_date = start_date+datetime.timedelta(0, 21600*300)
+                try:
+                    start_date = fucking_date.now() - \
+                        datetime.timedelta(336) if len(
+                            p_history) == 0 else fucking_date.fromtimestamp(p_history[0]['data'][-1][0])
+                    end_date = start_date+datetime.timedelta(0, 21600*300)
 
-                if start_date > fucking_date.now():
-                    time.sleep(10)
-                    continue
-                if end_date > fucking_date.now():
-                    end_date = fucking_date.now()
+                    if start_date < fucking_date.now() and end_date < fucking_date.now():
+                        end_date = fucking_date.now()
 
-                data = client.get_product_historic_rates(
-                    product.id, start=start_date, end=end_date, granularity=21600)
+                        data = client.get_product_historic_rates(
+                            product.id, start=start_date, end=end_date, granularity=21600)
 
-                if len(p_history) == 0 and len(data) > 1:
-                    data.reverse()
-                    p_history = {'id': product.id, 'data': data}
-                    product_history.append(p_history)
-                elif len(data) > 1:
-                    data.reverse()
-                    p_history[0]['data'].extend(data)
-            except Exception as e:
-                print('exception')
-                exc_type, exc_obj, tb = sys.exc_info()
-                f = tb.tb_frame
-                lineno = tb.tb_lineno
-                filename = f.f_code.co_filename
-                print('Exception at {} line {}'.format(filename, lineno))
-            try:
-                print('newest date in {}\n{}'.format(product.id,
-                                                     fucking_date.fromtimestamp(p_history[0]['data'][-1][0])))
-                product.historic_rates = p_history[0]['data']
-            except Exception as e:
+                        if len(p_history) == 0 and len(data) > 1:
+                            data.reverse()
+                            p_history = {'id': product.id, 'data': data}
+                            product_history.append(p_history)
+                        elif len(data) > 1:
+                            data.reverse()
+                            p_history[0]['data'].extend(data)
+                except Exception as e:
+                    pass
                 try:
                     print('newest date in {}\n{}'.format(product.id,
-                                                         fucking_date.fromtimestamp(p_history['data'][-1][0])))
-                    product.historic_rates = p_history['data']
+                                                         fucking_date.fromtimestamp(p_history[0]['data'][-1][0])))
+                    product.historic_rates = p_history[0]['data']
                 except Exception as e:
-                    print('exception')
-                    exc_type, exc_obj, tb = sys.exc_info()
-                    f = tb.tb_frame
-                    lineno = tb.tb_lineno
-                    filename = f.f_code.co_filename
-                    print('Exception at {} line {}'.format(filename,lineno))
-            time.sleep(.5)
+                    try:
+                        print('newest date in {}\n{}'.format(product.id,
+                                                             fucking_date.fromtimestamp(p_history['data'][-1][0])))
+                        product.historic_rates = p_history['data']
+                    except Exception as e:
+                        pass
+                time.sleep(1)
+            try:
+                start_date = fucking_date.now() - \
+                    datetime.timedelta(12) if len(
+                        p_history) == 0 else fucking_date.fromtimestamp(p_history[0]['data'][-1][0])
+                end_date = fucking_date.now()
+                mfi_values = client.get_product_historic_rates(
+                    product.id, start=start_date, end=end_date, granularity=3600)
+                mfi_values.reverse()
+                low = mfi_values[0][1]
+                high = mfi_values[0][2]
+                pos=[]
+                lows=[]
+                for i in range(2,len(mfi_values)):
+                    if mfi_values[i][4]>mfi_values[i-1][4]:
+                        pos.append(mfi_values[i][4])
+                    else:
+                        lows.append(mfi_values[i][4])
+                for value in mfi_values:
+                    if value[1] < low:
+                        low = value[1]
+                    if value[2] > high:
+                        high = value[2]
+                rs=max(pos)/min(lows)
+                rsi=100-100/(1+rs)
+                product.rsi=rsi
+                close = mfi_values[-1][4]
+                tp = (high+low+close)/3
+                # mf = tp*
+            except:
+                pass
+            time.sleep(1)
         print('history')
         print([x['id']+'{}'.format(len(x['data'])) for x in product_history])
         # print(product_history)
