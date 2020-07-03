@@ -25,8 +25,7 @@ class Product():
         self.own_orders = own_orders
         self.public_orders = public_orders
         self.amount = amount
-        self.public_transactions = public_transactions if len(
-            public_transactions) != 0 else market.get_transactions(days=28)
+        self.public_transactions = public_transactions
 
     def calculate_rate(self):
         # TODO

@@ -6,12 +6,11 @@ import json
 import sys
 from Controller import fuck_json
 from Models.product import Product
+from Models.transaction import Transaction
 
 client = cbpro.PublicClient()
 products = []
 
-
-# TODO extract into own class and set new values with function references
 def on_ticker_message(ws, message):
     global products
     try:
@@ -20,6 +19,13 @@ def on_ticker_message(ws, message):
         #print('{}:{}'.format(message['product_id'], message['price']))
         [x for x in products if x.id == message['product_id']
          ][0].rate = message['price']
+        base_currency = message['product_id'].split(
+            '-')[1] if message['side'] == 'buy' else message['product_id'].split('-')[0]
+        quote_currency = message['product_id'].split(
+            '-')[0] if message['side'] == 'sell' else message['product_id'].split('-')[1]
+        [x for x in products if x.id == message['product_id']
+         ][0].public_transactions.append(Transaction(
+            message['trade_id'], base_currency, quote_currency, rate=message['price']))
     except Exception as e:
         print(e)
         print(message)
