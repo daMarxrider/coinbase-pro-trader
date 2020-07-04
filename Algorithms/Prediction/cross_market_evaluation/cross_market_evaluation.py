@@ -44,7 +44,6 @@ class EvaluatedProduct(object):
 
     def __init__(self, p_id, dependencies=[]):
         self.id = p_id
-        print('getting dependencies')
         self.create_dependents()
         print('{}-{} with {}'.format(self.id,
                                      self.highest_mimicry['id'], self.highest_mimicry['value']))

@@ -11,12 +11,13 @@ def setup():
             for product in products:
                 if product.rsi!=0:
                     x=0
-                    # for order in wallet.wallets.orders:
-                    #     if order.quote_currency in product.id and order.base_currency in product.id:
-                    #         continue
+                    for order in wallet.wallets.orders:
+                        if order.quote_currency in product.id and order.base_currency in product.id:
+                            if order.statius in ['pending','open']:
+                                continue
                     if product.rsi<33:#TODO buy
                         wallet.buy(product)
                     elif product.rsi>66:#TODO sell
                         wallet.sell(product)
-        except:
+        except Exception as e:
             pass
