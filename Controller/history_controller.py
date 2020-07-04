@@ -35,22 +35,23 @@ def get_history(f=None):
                     start_date = fucking_date.now() - \
                         datetime.timedelta(336) if len(
                             p_history) == 0 else fucking_date.fromtimestamp(p_history[0]['data'][-1][0])
-                    end_date = start_date+datetime.timedelta(0, 21600*300)
+                    end_date = start_date+datetime.timedelta(0,21600*100)
 
-                    if start_date < fucking_date.now() and end_date < fucking_date.now():
+                    if start_date > fucking_date.now() and end_date > fucking_date.now():
                         end_date = fucking_date.now()
 
-                        data = client.get_product_historic_rates(
-                            product.id, start=start_date, end=end_date, granularity=21600)
+                    data = client.get_product_historic_rates(
+                        product.id, start=start_date, end=end_date, granularity=21600)
 
-                        if len(p_history) == 0 and len(data) > 1:
-                            data.reverse()
-                            p_history = {'id': product.id, 'data': data}
-                            product_history.append(p_history)
-                        elif len(data) > 1:
-                            data.reverse()
-                            p_history[0]['data'].extend(data)
+                    if len(p_history) == 0 and len(data) > 1:
+                        data.reverse()
+                        p_history = {'id': product.id, 'data': data}
+                        product_history.append(p_history)
+                    elif len(data) > 1:
+                        data.reverse()
+                        p_history[0]['data'].extend(data)
                 except Exception as e:
+                    x=0
                     pass
                 try:
                     print('newest date in {}\n{}'.format(product.id,
