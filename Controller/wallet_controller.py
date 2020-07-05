@@ -13,7 +13,6 @@ def buy(product):
     funds=[x for x in wallets if x['currency']==product.id.split('-')[1]][0]['available']
     order=client.place_market_order(product.id,'buy',funds=float(funds).__round__(5))
     get_wallets()
-    pass#TODO
 
 def sell(product):
     for order in orders:
@@ -23,7 +22,6 @@ def sell(product):
 
     order=client.place_market_order(product.id,'sell',funds=float(funds).__round__(5))
     get_wallets()
-    pass#TODO
 
 
 def get_wallets():
