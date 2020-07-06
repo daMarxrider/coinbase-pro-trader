@@ -15,14 +15,14 @@ def setup(plugins=[]):
                     for order in wallet.orders:
                         # TODO check if last order was a buy or sell of same product and prevent duplicate orders
                         if order.quote_currency in product.id and order.base_currency in product.id:
-                            if order.statius in ['pending', 'open']:
+                            if order.status in ['pending', 'open']:
                                 continue
                     if product.rsi < 33:
-                        if len(product.own_transactions)>0 and product.own_transactions[-1].status=='buy':
+                        if len(product.own_transactions)>0 and product.own_transactions[-1].type=='buy':
                             continue
                         wallet.buy(product)
                     elif product.rsi > 66:
-                        if len(product.own_transactions)>0 and product.own_transactions[-1].status=='sell':
+                        if len(product.own_transactions)>0 and product.own_transactions[-1].type=='sell':
                             continue
                         wallet.sell(product)
         except Exception as e:

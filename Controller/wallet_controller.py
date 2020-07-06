@@ -2,29 +2,62 @@ from Controller import client_controller
 from Models.transaction import Transaction
 from Controller import market_controller as market
 
+max_trading_value=None
 wallets = []
 orders = []
 client = None
 
 def buy(product):
+    if product.id.__contains__('USD') or product.view_only:
+        return
     for order in orders:
         if order.status=='open' and order.id==product.id:
             return
     funds=[x for x in wallets if x['currency']==product.id.split('-')[1]][0]['available']
-    funds=funds*0.5
-    order=client.place_market_order(product.id,'buy',funds=float(funds).__round__(5))
-    product.own_transactions.append(Transaction(product.id,'','',status='buy'))
-    get_wallets()
+    funds=float(funds)*0.5#TODO check for euro price
+    if funds!=0 and (product.min_transaction_size is None or product.min_transaction_size<funds):
+        order=client.place_market_order(product.id,'sell',size=funds)
+        if order['message'].__contains__('too accurate'):
+            decimals=len(order['message'].split('.')[-1])
+            order=client.place_market_order(product.id,'sell',size=funds.__round__(decimals))
+        # order=client.place_market_order(product.id,'buy',size=float(funds).__round__(5))
+        try:
+            if order['message'].__contains__('funds is too small. Minimum size is 10.00000000') or order['message'].__contains__('Trading pair not available'):
+                product.view_only=True
+            if order['message'].__contains__('too small'):
+                product.min_transaction_size=float(order['message'].split(' ')[-1])
+                x=0
+            else:
+                x=0
+        except:
+            product.own_transactions.append(Transaction(product.id,'','',type='buy'))
+            get_wallets()
 
 def sell(product):
+    if product.id.__contains__('USD') or product.view_only:
+        return
     for order in orders:
         if order.status=='open' and order.id==product.id:
             return
     funds=[x for x in wallets if x['currency']==product.id.split('-')[0]][0]['available']
-    funds=funds*0.5
-    order=client.place_market_order(product.id,'sell',funds=float(funds).__round__(5))
-    product.own_transactions.append(Transaction(product.id,'','',status='sell'))
-    get_wallets()
+    funds=float(funds)*0.5#TODO check for euro price
+    if funds!=0 and (product.min_transaction_size is None or product.min_transaction_size<funds):
+        order=client.place_market_order(product.id,'sell',size=funds)
+        if order['message'].__contains__('too accurate'):
+            decimals=len(order['message'].split('.')[-1])
+            order=client.place_market_order(product.id,'sell',size=funds.__round__(decimals))
+        # order=client.place_market_order(product.id,'sell',size=float(funds).__round__(5))
+        try:
+            if order['message'].__contains__('funds is too small. Minimum size is 10.00000000') or order['message'].__contains__('Trading pair not available'):
+                product.view_only=True
+            if order['message'].__contains__('too small'):
+                product.min_transaction_size=float(order['message'].split(' ')[-1])
+                x=0
+            else:
+                x=0
+        except:
+            product.own_transactions.append(Transaction(product.id,'','',type='sell'))
+            get_wallets()
 
 
 def get_wallets():
