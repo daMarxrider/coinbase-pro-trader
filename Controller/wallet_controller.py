@@ -11,7 +11,9 @@ def buy(product):
         if order.status=='open' and order.id==product.id:
             return
     funds=[x for x in wallets if x['currency']==product.id.split('-')[1]][0]['available']
+    funds=funds*0.5
     order=client.place_market_order(product.id,'buy',funds=float(funds).__round__(5))
+    product.own_transactions.append(Transaction(product.id,'','',status='buy'))
     get_wallets()
 
 def sell(product):
@@ -19,8 +21,9 @@ def sell(product):
         if order.status=='open' and order.id==product.id:
             return
     funds=[x for x in wallets if x['currency']==product.id.split('-')[0]][0]['available']
-
+    funds=funds*0.5
     order=client.place_market_order(product.id,'sell',funds=float(funds).__round__(5))
+    product.own_transactions.append(Transaction(product.id,'','',status='sell'))
     get_wallets()
 
 
