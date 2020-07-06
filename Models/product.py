@@ -17,6 +17,8 @@ class Product():
     public_transactions = []
     mfi = 0
     rsi=0
+    highest_mimicry={}
+    mimicries=[]
 
     def __init__(self, id,
                  base_currency=None, quote_currency=None, own_orders=None, public_orders=None,
@@ -30,7 +32,5 @@ class Product():
         self.public_transactions = public_transactions
         self.mfi = mfi
         self.rsi=rsi
-
-    def calculate_rate(self):
-        # TODO
-        return self.rate
+        self.highest_mimicry={}
+        self.mimicries=[]

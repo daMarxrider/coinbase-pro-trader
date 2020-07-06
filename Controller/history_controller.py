@@ -42,6 +42,7 @@ def get_history(f=None):
                 end_date = start_date+datetime.timedelta(0,21600*100)
 
                 if start_date > fucking_date.now() and end_date > fucking_date.now():
+                    #TODO move rsi calculation here, to have more data and less requests
                     end_date = fucking_date.now()
 
                 data = client.get_product_historic_rates(
