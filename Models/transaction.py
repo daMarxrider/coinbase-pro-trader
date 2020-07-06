@@ -10,8 +10,9 @@ class Transaction:
     fee = None
     rate = None
     status=None
+    type=None
 
-    def __init__(self, id, base_currency, quote_currency, fee=None, base_value=None, quote_value=None, rate=None,status=None):
+    def __init__(self, id, base_currency, quote_currency, fee=None, base_value=None, quote_value=None, rate=None,status=None,type=None):
         self.id = id
         self.base_currency = base_currency
         self.quote_currency = quote_currency
@@ -20,3 +21,4 @@ class Transaction:
         self.quote_value = quote_value
         self.rate = rate
         self.status=status
+        self.type=type

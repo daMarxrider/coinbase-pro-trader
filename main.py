@@ -1,6 +1,7 @@
 import cbpro
 import os
 import sys
+import argparse
 import yaml
 import _thread as thread
 import time
@@ -12,16 +13,21 @@ import Algorithms.Prediction.cross_market_evaluation.cross_market_evaluation as 
 import Algorithms.Trading.rsi_based as rsi
 from datetime import datetime as fucking_date
 import datetime
+parser=argparse.ArgumentParser()
+parser.add_argument("--max_value","-m",help="set max trading value in euro")
+parser.add_argument("--system","-s",help="the system-name from your yaml config that should be used")
+args=parser.parse_args()
 configuration = []
 
 
 def configure():
     global configuration
-    if len(sys.argv) == 1 or sys.argv[1] == 'prod':
+    wallet.max_trading_value=args.max_value
+    if len(sys.argv) == 1:
         systemname = 'prod'
         systemuri = 'https://api.pro.coinbase.com'
     else:
-        systemname = sys.argv[1]
+        systemname = args.system
         systemuri = 'https://api-public.sandbox.pro.coinbase.com'
     if os.path.exists(filename := ('{}{}{}'.format(os.getcwd(), os.sep, 'conf.yaml'))):
         configuration = yaml.load(open(filename, 'r'), Loader=yaml.FullLoader)

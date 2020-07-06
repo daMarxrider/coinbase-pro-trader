@@ -39,10 +39,10 @@ def get_history(f=None):
                 start_date = fucking_date.now() - \
                     datetime.timedelta(336) if len(
                         p_history) == 0 else fucking_date.fromtimestamp(p_history[0]['data'][-1][0])
-                end_date = start_date+datetime.timedelta(0,21600*100)
+                end_date = start_date+datetime.timedelta(0, 21600*100)
 
                 if start_date > fucking_date.now() and end_date > fucking_date.now():
-                    #TODO move rsi calculation here, to have more data and less requests
+                    # TODO move rsi calculation here, to have more data and less requests
                     end_date = fucking_date.now()
 
                 data = client.get_product_historic_rates(
@@ -56,7 +56,7 @@ def get_history(f=None):
                     data.reverse()
                     p_history[0]['data'].extend(data)
             except Exception as e:
-                x=0
+                x = 0
                 pass
             try:
                 print('newest date in {}\n{}'.format(product.id,
@@ -77,6 +77,23 @@ def get_history(f=None):
                 mfi_values = client.get_product_historic_rates(
                     product.id, start=start_date, end=end_date, granularity=3600)
 
+
+                # mfi_values=[]
+                # for i in range(1,13):
+                #     start_date = fucking_date.now() - \
+                #                  datetime.timedelta(12) if len(mfi_values)==0 else datetime.datetime.fromtimestamp(mfi_values[-1][0])
+                #     end_date = start_date+datetime.timedelta(1)
+                #     data=client.get_product_historic_rates(
+                #         product.id, start=start_date, end=end_date, granularity=300)
+                #     data.reverse()
+                #     mfi_values.extend(data)
+                #     time.sleep(1)
+                #     #TODO append to p_history and only execute if no data newer than 30min is available
+
+
+
+
+                #
                 mfi_values.reverse()
 
                 data = {
@@ -87,7 +104,8 @@ def get_history(f=None):
                     'Volume': [x[5] for x in mfi_values]
                 }
 
-                df=pd.DataFrame(data,columns=['Open','High','Low','Close','Volume'])
+                df = pd.DataFrame(
+                    data, columns=['Open', 'High', 'Low', 'Close', 'Volume'])
                 # indicators=Indicators(df)
                 #
                 # indicators.accelerator_oscillator(column_name='AC')
@@ -98,8 +116,9 @@ def get_history(f=None):
                 # df = indicators.df
                 # df.tail()
 
-                df=dropna(df)
-                df=add_all_ta_features(df,'Open','High','Low','Close','Volume')
+                df = dropna(df)
+                df = add_all_ta_features(
+                    df, 'Open', 'High', 'Low', 'Close', 'Volume')
 
                 # low = mfi_values[0][1]
                 # high = mfi_values[0][2]
@@ -118,7 +137,7 @@ def get_history(f=None):
                 # rs=max(highs)/min(lows)
                 # rsi=100-100/(1+rs)
                 # product.rsi=rsi
-                product.rsi=df['momentum_rsi'].values[-1]
+                product.rsi = df['momentum_rsi'].values[-1]
                 # close = mfi_values[-1][4]
                 # tp = (high+low+close)/3
                 # mf = tp*
