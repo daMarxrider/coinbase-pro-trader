@@ -16,10 +16,10 @@ def buy(product):
     funds=[x for x in wallets if x['currency']==product.id.split('-')[1]][0]['available']
     funds=float(funds)*0.5#TODO check for euro price
     if funds!=0 and (product.min_transaction_size is None or product.min_transaction_size<funds):
-        order=client.place_market_order(product.id,'sell',size=funds)
+        order=client.place_market_order(product.id,'buy',size=funds)
         if order['message'].__contains__('too accurate'):
             decimals=len(order['message'].split('.')[-1])
-            order=client.place_market_order(product.id,'sell',size=funds.__round__(decimals))
+            order=client.place_market_order(product.id,'buy',size=funds.__round__(decimals))
         # order=client.place_market_order(product.id,'buy',size=float(funds).__round__(5))
         try:
             if order['message'].__contains__('funds is too small. Minimum size is 10.00000000') or order['message'].__contains__('Trading pair not available'):
