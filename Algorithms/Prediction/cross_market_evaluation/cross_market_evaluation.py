@@ -3,9 +3,11 @@ import linecache
 from Controller import history_controller as history
 import statistics
 from datetime import timedelta, datetime as fucking_date
+from Controller import market_controller as market
 
 evaluated_products = []
 product_history = history.product_history
+products=[]
 
 
 def setup():
@@ -13,6 +15,7 @@ def setup():
     evaluated_products = []
     while 1:
         try:
+            products=market.products
             product_history = history.product_history
             if any(x['data'][-1][0] >= (fucking_date.now()-timedelta(1)).timestamp() for x in product_history):
                 for p_history in product_history:
@@ -81,6 +84,7 @@ class EvaluatedProduct(object):
                 mimicry = statistics.pstdev(mimic_results)
                 # print(mimicry)
                 if mimicry < 0.1:
+                    [x for x in market.products if x.id == self.id][0].mimicries.append({'id':dep_product['id'],'value':mimic})
                     if len(id := ([x for x in self.dependencies if x['id'] == dep_product['id']])) == 0:
                         self.dependencies.append(
                             {'id': dep_product['id'], 'value': mimicry})
@@ -90,6 +94,7 @@ class EvaluatedProduct(object):
             for dep in self.dependencies:
                 if self.highest_mimicry is None or self.highest_mimicry['value'] > dep['value']:
                     self.highest_mimicry = dep
+            [x for x in market.products if x.id == self.id][0].highest_mimicry={'id':self.highest_mimicry['id'],'value':self.highest_mimicry['value']}
         except IndexError:
             print('probably no valid history available, if you are using the sandbox api, this is definitely the case')
         except Exception as e:
