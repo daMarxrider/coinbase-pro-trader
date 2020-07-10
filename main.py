@@ -29,7 +29,7 @@ def configure():
     else:
         systemname = args.system
         systemuri = 'https://api-public.sandbox.pro.coinbase.com'
-    if os.path.exists(filename := ('{}{}{}'.format(os.getcwd(), os.sep, 'conf.yaml'))):
+    if os.path.exists(filename := ('{}{}{}'.format(sys.path[0], os.sep, 'conf.yaml'))):
         configuration = yaml.load(open(filename, 'r'), Loader=yaml.FullLoader)
         print(configuration)
     if len(configuration) == 0 or len([x for x in configuration if x['system']['name'] == systemname]) == 0:
