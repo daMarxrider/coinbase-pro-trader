@@ -22,7 +22,7 @@ configuration = []
 
 def configure():
     global configuration
-    wallet.max_trading_value=args.max_value
+    wallet.max_trading_value=float(args.max_value)
     if len(sys.argv) == 1:
         systemname = 'prod'
         systemuri = 'https://api.pro.coinbase.com'
@@ -57,9 +57,10 @@ def main():
     # TODO start threads for controllers once created
     products = market.products
     thread.start_new_thread(market.get_products_feed, ())
-    thread.start_new_thread(history.get_history, (algorithm.setup,))
+    #TODO require user input for funtion(s)
+    thread.start_new_thread(history.get_history,[history.calculate_rsi],{'start_early':True})
     thread.start_new_thread(algorithm.setup, ())
-    thread.start_new_thread(rsi.setup, ())
+    # thread.start_new_thread(rsi.setup, ())
     while 1:
         # threads keep running, but this prevents the script from closing without using a shitty framework
         time.sleep(3600)

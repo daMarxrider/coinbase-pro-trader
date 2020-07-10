@@ -19,11 +19,32 @@ product_current_data = []
 product_complete_data = []
 
 client = None
+def calculate_rsi(product,**kwargs):
+    shortened_mfi = []
+    better_start_date = fucking_date.now() - datetime.timedelta(days:=14)
+    better_end_date = fucking_date.now()
+    shortened_mfi = client.get_product_historic_rates(
+        product.id, start=better_start_date, end=better_end_date, granularity=86400)
+    shortened_mfi.reverse()
+    time.sleep(1)
+    shortened_better_data = {
+        'Open': [x[3] for x in shortened_mfi],
+        'High': [x[2] for x in shortened_mfi],
+        'Low': [x[1] for x in shortened_mfi],
+        'Close': [x[4] for x in shortened_mfi],
+        'Volume': [x[5] for x in shortened_mfi]
+    }
+
+    shortened_df = pd.notna(pd.DataFrame(
+        [x[1:] for x in shortened_mfi], columns=['Open', 'High', 'Low', 'Close', 'Volume']))
+
+    shortened_rsi_value = \
+        rsi(pd.Series(data=[x[4] for x in shortened_mfi]), n=len(shortened_mfi)).values[-1]
+    product.rsi = shortened_rsi_value
 
 
-def get_history(f=None):
+def get_history(f=calculate_rsi,**kwargs):
     global client, product_history, product_current_data, product_complete_data
-
     # from docs
     # [ time, low, high, open, close, volume  ],
     # [ 1415398768, 0.32, 4.2, 0.35, 4.2, 12.3  ],
@@ -42,40 +63,20 @@ def get_history(f=None):
                         p_history) == 0 else fucking_date.fromtimestamp(p_history[0]['data'][-1][0])
                 end_date = start_date+datetime.timedelta(0, 21600*100)
 
-                if start_date > fucking_date.now()-datetime.timedelta(1) or end_date > fucking_date.now()-datetime.timedelta(1):
-                    # TODO move rsi calculation here, to have more data and less requests
-                    mfi_values=[]
-                    for i in range(1,15):
-                        better_start_date = fucking_date.now() - \
-                                     datetime.timedelta(14) if len(mfi_values)==0 else datetime.datetime.fromtimestamp(mfi_values[-1][0])
-                        better_end_date = better_start_date+datetime.timedelta(1)
-                        better_data=client.get_product_historic_rates(
-                            product.id, start=better_start_date, end=better_end_date, granularity=3600)
-                        better_data.reverse()
-                        mfi_values.extend(better_data)
+                #calculate statistics for wanted data
+                if start_date > fucking_date.now()-datetime.timedelta(1) or end_date > fucking_date.now()-datetime.timedelta(1) or kwargs.get('start_early'):
+                    #Duck Typing + betterPerformance than if, i know, but python optimizes exception as if it´s life depended on it
+                    # ^ encouraged by python
+                    try:
+                        f(product=product,**kwargs)
+                    except Exception as e:
+                        [fnctn(product=product,**kwargs) for fnctn in f]
+                    finally:
+                        product.is_analyzed=True
+                    if kwargs.get('start_early'):
                         time.sleep(1)
-                        #TODO append to p_history and only execute if no data newer than 30min is available
-                    better_data = {
-                        'Open': [x[3] for x in mfi_values],
-                        'High': [x[2] for x in mfi_values],
-                        'Low': [x[1] for x in mfi_values],
-                        'Close': [x[4] for x in mfi_values],
-                        'Volume': [x[5] for x in mfi_values]
-                    }
-
-                    df = pd.DataFrame(
-                        better_data, columns=['Open', 'High', 'Low', 'Close', 'Volume'])
-                    df = dropna(df)
-                    df = add_all_ta_features(
-                        df, 'Open', 'High', 'Low', 'Close', 'Volume')
-
-                    rsi_value=rsi(pd.Series(data=[x[4] for x in mfi_values]+[float(product.rate)]),n=len(mfi_values)+1).values[-1]
-                    # product.rsi = df['momentum_rsi'].values[-1]
-                    product.rsi=rsi_value
-
-                    continue
-
-                    end_date = fucking_date.now()
+                    else:
+                        continue
 
                 data = client.get_product_historic_rates(
                     product.id, start=start_date, end=end_date, granularity=21600)
@@ -88,86 +89,20 @@ def get_history(f=None):
                     data.reverse()
                     p_history[0]['data'].extend(data)
             except Exception as e:
-                x = 0
                 pass
             try:
-                print('newest date in {}\n{}'.format(product.id,
-                                                     fucking_date.fromtimestamp(p_history[0]['data'][-1][0])))
                 product.historic_rates = p_history[0]['data']
             except Exception as e:
                 try:
-                    print('newest date in {}\n{}'.format(product.id,
-                                                         fucking_date.fromtimestamp(p_history['data'][-1][0])))
                     product.historic_rates = p_history['data']
                 except Exception as e:
                     pass
             time.sleep(1)
-            try:
-                # start_date = fucking_date.now() - \
-                #     datetime.timedelta(12)
-                # end_date = fucking_date.now()
-                # mfi_values = client.get_product_historic_rates(
-                #     product.id, start=start_date, end=end_date, granularity=3600)
-                #
-                #
-                #
-                #
-                #
-                #
-                #
-                # #
-                # mfi_values.reverse()
-                #
-                # data = {
-                #     'Open': [x[3] for x in mfi_values],
-                #     'High': [x[2] for x in mfi_values],
-                #     'Low': [x[1] for x in mfi_values],
-                #     'Close': [x[4] for x in mfi_values],
-                #     'Volume': [x[5] for x in mfi_values]
-                # }
-                #
-                # df = pd.DataFrame(
-                #     data, columns=['Open', 'High', 'Low', 'Close', 'Volume'])
-                # # indicators=Indicators(df)
-                # #
-                # # indicators.accelerator_oscillator(column_name='AC')
-                # # indicators.sma()
-                # # indicators.smma()
-                # # indicators.bears_power()
-                # # indicators.momentum()
-                # # df = indicators.df
-                # # df.tail()
-                #
-                # df = dropna(df)
-                # df = add_all_ta_features(
-                #     df, 'Open', 'High', 'Low', 'Close', 'Volume')
-                #
-                # # low = mfi_values[0][1]
-                # # high = mfi_values[0][2]
-                # # highs=[]
-                # # lows=[]
-                # # for i in range(2,len(mfi_values)):
-                # #     if mfi_values[i][4]>mfi_values[i-1][4]:
-                # #         highs.append(mfi_values[i][4]-mfi_values[i-1][4])
-                # #     elif mfi_values[i][4]<mfi_values[i-1][4]:
-                # #         lows.append(mfi_values[i-1][4]-mfi_values[i][4])
-                # # for value in mfi_values:
-                # #     if value[1] < low:
-                # #         low = value[1]
-                # #     if value[2] > high:
-                # #         high = value[2]
-                # # rs=max(highs)/min(lows)
-                # # rsi=100-100/(1+rs)
-                # # product.rsi=rsi
-                # product.rsi = df['momentum_rsi'].values[-1]
-                # close = mfi_values[-1][4]
-                # tp = (high+low+close)/3
-                # mf = tp*
-                pass
-            except Exception as e:
-                pass
-            # time.sleep(1)
         print('history')
-        print([x['id']+'{}'.format(len(x['data'])) for x in product_history])
+        print([x['id']+'{}, newest timestamp {}\n'.format(len(x['data']),fucking_date.fromtimestamp(x['data'][-1][0])) for x in product_history])
+        print('rsi values')
+        [print('{}:{}'.format(x.id,x.rsi)) for x in market.products]
         # print(product_history)
         # time.sleep(10)
+
+

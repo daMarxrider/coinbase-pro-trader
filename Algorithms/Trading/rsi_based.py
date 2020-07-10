@@ -10,7 +10,9 @@ def setup(plugins=[]):
     while 1:
         try:
             for product in products:
-                if product.rsi != 0:
+                if 'COMP' in product.id:
+                    continue
+                if product.rsi!=0:
                     x = 0
                     for order in wallet.orders:
                         # TODO check if last order was a buy or sell of same product and prevent duplicate orders
