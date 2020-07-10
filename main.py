@@ -1,6 +1,7 @@
 import cbpro
 import os
 import sys
+import argparse
 import yaml
 import _thread as thread
 import time
@@ -9,18 +10,24 @@ from Controller import client_controller as cli
 import Controller.wallet_controller as wallet
 import Controller.history_controller as history
 import Algorithms.Prediction.cross_market_evaluation.cross_market_evaluation as algorithm
+import Algorithms.Trading.rsi_based as rsi
 from datetime import datetime as fucking_date
 import datetime
+parser=argparse.ArgumentParser()
+parser.add_argument("--max_value","-m",help="set max trading value in euro")
+parser.add_argument("--system","-s",help="the system-name from your yaml config that should be used")
+args=parser.parse_args()
 configuration = []
 
 
 def configure():
     global configuration
-    if len(sys.argv) == 1 or sys.argv[1] == 'prod':
+    wallet.max_trading_value=float(args.max_value)
+    if len(sys.argv) == 1:
         systemname = 'prod'
         systemuri = 'https://api.pro.coinbase.com'
     else:
-        systemname = sys.argv[1]
+        systemname = args.system
         systemuri = 'https://api-public.sandbox.pro.coinbase.com'
     if os.path.exists(filename := ('{}{}{}'.format(os.getcwd(), os.sep, 'conf.yaml'))):
         configuration = yaml.load(open(filename, 'r'), Loader=yaml.FullLoader)
@@ -50,8 +57,10 @@ def main():
     # TODO start threads for controllers once created
     products = market.products
     thread.start_new_thread(market.get_products_feed, ())
-    thread.start_new_thread(history.get_history, (algorithm.setup,))
+    #TODO require user input for funtion(s)
+    thread.start_new_thread(history.get_history,[history.calculate_rsi],{'start_early':True})
     thread.start_new_thread(algorithm.setup, ())
+    thread.start_new_thread(rsi.setup, ())
     while 1:
         # threads keep running, but this prevents the script from closing without using a shitty framework
         time.sleep(3600)
