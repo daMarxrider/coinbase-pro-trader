@@ -7,7 +7,7 @@ Also could use more algorithms and a importance for every algorithm if multiple 
     * predicted problem: not enough data => look for data on other sources
 
 ## Why this bot
-most other open-source bots can only trade one product(e.g. BTC-EUR, ETRH-EUR) at a time.
+most other open-source bots can only trade one product(e.g. BTC-EUR, ETH-EUR) at a time.
 This sucks ass and thus I made a bot that can trade every tradable product at the same time.
 
 ## Requirements
