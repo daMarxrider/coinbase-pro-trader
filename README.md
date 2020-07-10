@@ -30,7 +30,4 @@ Insert copy-paste Disclaimer for "use at your own risk, I´m not responsible for
 * uses of try-except instead of if-else to handle exceptional cases.(see python optimizations)
 * code displays various levels of salt
 * objects are often retrieved by reference, to ensure processing of live-data
-* if someone knows how to get rid of the error, that shitty GUIs get,when importing modules in another Directory 
-    WITHOUT inserting the path manually(that solution sucks, just because it´s generally accepted, doesn´t mean it´s good)
-    please make a PR.
-    * btw, python doesn't care about the above mentioned error,thus the term "shitty GUIs"
+
