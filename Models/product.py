@@ -27,7 +27,7 @@ class Product():
 
     def __init__(self, id,
                  base_currency=None, quote_currency=None, own_orders=None, public_orders=None,
-                 amount=None, own_transactions=None, public_transactions=[], historic_rates=[], mfi=0,rsi=0,view_only=False):
+                 amount=None, own_transactions=None, public_transactions=[], historic_rates=[], mfi=0,rsi=0,view_only=False,min_transaction_size=0):
         self.id = id
         self.base_currency = base_currency
         self.quote_currency = quote_currency
@@ -40,7 +40,7 @@ class Product():
         self.highest_mimicry={}
         self.mimicries=[]
         self.view_only=view_only
-        min_transaction_size=None
+        self.min_transaction_size=float(min_transaction_size)
         self.is_analyzed=False
         self.best_route_to_euro=[]
         self.euro_rate=1

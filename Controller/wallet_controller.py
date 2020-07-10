@@ -14,11 +14,17 @@ def buy(product):
     for order in orders:
         if order.status=='open' and order.id==product.id:
             return
+    if len([x for x in orders if x.product_id==product.id and x.type!='fee'])>0 and [x for x in orders if x.product_id==product.id and x.type!='fee'][0].type=='buy':
+        return
     funds=float([x for x in wallets if x['currency']==product.id.split('-')[1]][0]['available'])
     if funds*product.euro_rate>max_trading_value:
         funds=max_trading_value/product.euro_rate
     if funds!=0 and (product.min_transaction_size is None or product.min_transaction_size<funds):
         order=client.place_market_order(product.id,'buy',size=funds)
+        if 'message' not in order.keys():
+            product.own_transactions.append(Transaction(product.id,'','',type='buy'))
+            get_wallets()
+            return order
         if order['message'].__contains__('too accurate'):
             decimals=len(order['message'].split('.')[-1])
             order=client.place_market_order(product.id,'buy',size=funds.__round__(decimals))
@@ -47,11 +53,17 @@ def sell(product):
     for order in orders:
         if order.status=='open' and order.id==product.id:
             return
+    if len([x for x in orders if x.product_id==product.id and x.type!='fee'])>0 and [x for x in orders if x.product_id==product.id and x.type!='fee'][0].type=='sell':
+        return
     funds=float([x for x in wallets if x['currency']==product.id.split('-')[0]][0]['available'])
     if funds*product.euro_rate>max_trading_value:
         funds=max_trading_value/product.euro_rate
     if funds!=0 and (product.min_transaction_size is None or product.min_transaction_size<funds):
         order=client.place_market_order(product.id,'sell',size=funds)
+        if 'message' not in order.keys():
+            product.own_transactions.append(Transaction(product.id,'','',type='buy'))
+            get_wallets()
+            return order
         if order['message'].__contains__('too accurate'):
             decimals=len(order['message'].split('.')[-1])
             order=client.place_market_order(product.id,'sell',size=funds.__round__(decimals))
@@ -83,14 +95,23 @@ def get_wallets():
     wallets = client.get_accounts()
     orders = []
     for wallet in wallets:
-        json_orders = client.get_account_holds(wallet['id'])
+        json_orders = client.get_account_history(wallet['id'])
         for order in json_orders:
             amount = order['amount']
-            order = client.get_order(order['ref'])
+            if order['type']=='fee':
+                type='fee'
+            elif order['type']=='match':
+                if float(order['balance'])<0:
+                    type='sell'
+                else:
+                    type='buy'
+            elif order['type']=='transfer':
+                continue
+            order = client.get_order(order['details']['order_id'])
             base_currency = order['product_id'].split(
                 '-')[1] if order['side'] == 'buy' else order['product_id'].split('-')[0]
             quote_currency = order['product_id'].split(
                 '-')[1] if order['side'] == 'sell' else order['product_id'].split('-')[0]
             orders.append(Transaction(
-                order['id'], base_currency, quote_currency, fee=order['fill_fees'], base_value=amount, quote_value=order['size'], rate=order['price'],status=order['status']))
+                order['id'], base_currency, quote_currency,product_id=order['product_id'], fee=order['fill_fees'], base_value=amount, quote_value=order['size']if 'size' in dir(order) else '0', status=order['status'],type=type))
     return wallets, orders
