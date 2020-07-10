@@ -11,6 +11,7 @@ from Models.transaction import Transaction
 client = cbpro.PublicClient()
 products = []
 
+
 def on_ticker_message(ws, message):
     global products
     try:
@@ -19,16 +20,19 @@ def on_ticker_message(ws, message):
         #print('{}:{}'.format(message['product_id'], message['price']))
         [x for x in products if x.id == message['product_id']
          ][0].rate = message['price']
+        [x for x in products if x.id == message['product_id']
+         ][0].get_best_route_to_euro()
         base_currency = message['product_id'].split(
             '-')[1] if message['side'] == 'buy' else message['product_id'].split('-')[0]
         quote_currency = message['product_id'].split(
             '-')[0] if message['side'] == 'sell' else message['product_id'].split('-')[1]
         [x for x in products if x.id == message['product_id']
          ][0].public_transactions.append(Transaction(
-            message['trade_id'], base_currency, quote_currency, rate=message['price']))
+             message['trade_id'], base_currency, quote_currency, rate=message['price']))
     except Exception as e:
-        print(e)
-        print(message)
+        pass
+        # print(e)
+        # print(message)
 
 
 def on_error(ws, error):
@@ -38,6 +42,7 @@ def on_error(ws, error):
 
 def on_close(ws):
     print("### closed ###")
+    get_products_feed()
 
 
 def on_open(ws):
@@ -57,7 +62,7 @@ def init_products():
     if len(products) == 0:
         for product in client.get_products():
             products.append(Product(
-                id=product['id'], base_currency=product['base_currency'], quote_currency=product['quote_currency']))
+                id=product['id'], base_currency=product['base_currency'], quote_currency=product['quote_currency'],view_only= product['trading_disabled'],min_transaction_size=product['min_market_funds']))
     return products
 
 
