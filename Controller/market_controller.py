@@ -20,6 +20,8 @@ def on_ticker_message(ws, message):
         #print('{}:{}'.format(message['product_id'], message['price']))
         [x for x in products if x.id == message['product_id']
          ][0].rate = message['price']
+        [x for x in products if x.id == message['product_id']
+         ][0].get_best_route_to_euro()
         base_currency = message['product_id'].split(
             '-')[1] if message['side'] == 'buy' else message['product_id'].split('-')[0]
         quote_currency = message['product_id'].split(

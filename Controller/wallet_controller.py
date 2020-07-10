@@ -1,11 +1,12 @@
 from Controller import client_controller
 from Models.transaction import Transaction
 from Controller import market_controller as market
+from cbpro import AuthenticatedClient
 
 max_trading_value=None
 wallets = []
 orders = []
-client = None
+client:  AuthenticatedClient= None
 
 def buy(product):
     if product.id.__contains__('USD') or product.view_only:
@@ -13,8 +14,9 @@ def buy(product):
     for order in orders:
         if order.status=='open' and order.id==product.id:
             return
-    funds=[x for x in wallets if x['currency']==product.id.split('-')[1]][0]['available']
-    funds=float(funds)*0.5#TODO check for euro price
+    funds=float([x for x in wallets if x['currency']==product.id.split('-')[1]][0]['available'])
+    if funds*product.euro_rate>max_trading_value:
+        funds=max_trading_value/product.euro_rate
     if funds!=0 and (product.min_transaction_size is None or product.min_transaction_size<funds):
         order=client.place_market_order(product.id,'buy',size=funds)
         if order['message'].__contains__('too accurate'):
@@ -27,6 +29,12 @@ def buy(product):
             if order['message'].__contains__('too small'):
                 product.min_transaction_size=float(order['message'].split(' ')[-1])
                 x=0
+            if order['message']=='Limit only mode':
+                order=client.place_limit_order(product.id,'buy',product.rate,funds)
+                if order['message'].__contains__('too small'):
+                    product.min_transaction_size = float(order['message'].split(' ')[-1])
+                else:
+                    x=0
             else:
                 x=0
         except:
@@ -39,8 +47,9 @@ def sell(product):
     for order in orders:
         if order.status=='open' and order.id==product.id:
             return
-    funds=[x for x in wallets if x['currency']==product.id.split('-')[0]][0]['available']
-    funds=float(funds)*0.5#TODO check for euro price
+    funds=float([x for x in wallets if x['currency']==product.id.split('-')[0]][0]['available'])
+    if funds*product.euro_rate>max_trading_value:
+        funds=max_trading_value/product.euro_rate
     if funds!=0 and (product.min_transaction_size is None or product.min_transaction_size<funds):
         order=client.place_market_order(product.id,'sell',size=funds)
         if order['message'].__contains__('too accurate'):
@@ -52,6 +61,13 @@ def sell(product):
                 product.view_only=True
             if order['message'].__contains__('too small'):
                 product.min_transaction_size=float(order['message'].split(' ')[-1])
+                x=0
+            if order['message']=='Limit only mode':
+                order=client.place_limit_order(product.id,'sell',product.rate,funds)
+                if order['message'].__contains__('too small'):
+                    product.min_transaction_size = float(order['message'].split(' ')[-1])
+                else:
+                    x=0
                 x=0
             else:
                 x=0
