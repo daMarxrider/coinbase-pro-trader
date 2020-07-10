@@ -58,7 +58,7 @@ def main():
     products = market.products
     thread.start_new_thread(market.get_products_feed, ())
     #TODO require user input for funtion(s)
-    thread.start_new_thread(history.get_history,[history.calculate_rsi],{'start_early':True})
+    thread.start_new_thread(history.get_history,([history.calculate_rsi],),{'start_early':True})
     thread.start_new_thread(algorithm.setup, ())
     thread.start_new_thread(rsi.setup, ())
     while 1:
