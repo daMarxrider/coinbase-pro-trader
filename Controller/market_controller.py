@@ -42,6 +42,7 @@ def on_error(ws, error):
 
 def on_close(ws):
     print("### closed ###")
+    get_products_feed()
 
 
 def on_open(ws):

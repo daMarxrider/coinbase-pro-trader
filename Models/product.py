@@ -50,7 +50,7 @@ class Product():
         routes=[]
         if self.id.__contains__('EUR'):
             self.best_route_to_euro.append(self.id)
-            self.euro_rate=self.rate
+            self.euro_rate=float(self.rate)
             return
         for product in market.products:
             try:
@@ -60,7 +60,7 @@ class Product():
                     #TODO dont iterate if direct conversion to euro is possible
                     for p_temp in market.products:
                         if p_temp.id in route_list:#TODO fix stablecoin duplication in list error. See above comment
-                            calc_rate*=float(p_temp.rate)*0.995
+                            calc_rate*=p_temp.rate*0.995
                     routes.append({'route':[self.id]+route_list,'rate':calc_rate})
             except:
                 pass

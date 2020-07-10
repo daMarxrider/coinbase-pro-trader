@@ -101,7 +101,9 @@ def get_history(f=calculate_rsi,**kwargs):
         print('history')
         print([x['id']+'{}, newest timestamp {}\n'.format(len(x['data']),fucking_date.fromtimestamp(x['data'][-1][0])) for x in product_history])
         print('rsi values')
-        [print('{}:{}'.format(x.id,x.rsi)) for x in market.products]
+        print(['{}:{}'.format(x.id,x.rsi) for x in market.products if x.rsi!=0])
+        print('euro_rates')
+        print(['{}:{}'.format(x.id,x.euro_rate) for x in market.products if x.euro_rate!=1])
         # print(product_history)
         # time.sleep(10)
 
