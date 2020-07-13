@@ -42,8 +42,6 @@ class EvaluatedProduct(object):
     p_ref = None
     dependencies = []
     highest_mimicry = None
-    # TODO set cheapest_route to euro
-    cheapest_route = []
 
     def __init__(self, p_id, dependencies=[]):
         self.id = p_id
@@ -80,12 +78,11 @@ class EvaluatedProduct(object):
                     mimic_results.append(
                         (mimic[4]/mimic[3])/(slot[4]/slot[3]))
 
-                # print(mimic_results)
                 mimicry = statistics.pstdev(mimic_results)
-                # print(mimicry)
                 if mimicry < 0.1:
                     [x for x in market.products if x.id == self.id][0].mimicries.append({'id':dep_product['id'],'value':mimic})
-                    if len(id := ([x for x in self.dependencies if x['id'] == dep_product['id']])) == 0:
+                    id = ([x for x in self.dependencies if x['id'] == dep_product['id']])
+                    if len(id) == 0:
                         self.dependencies.append(
                             {'id': dep_product['id'], 'value': mimicry})
                     else:
@@ -98,7 +95,6 @@ class EvaluatedProduct(object):
         except IndexError:
             print('probably no valid history available, if you are using the sandbox api, this is definitely the case')
         except Exception as e:
-            # print('exception')
             exc_type, exc_obj, tb = sys.exc_info()
             f = tb.tb_frame
             lineno = tb.tb_lineno
@@ -106,6 +102,3 @@ class EvaluatedProduct(object):
             linecache.checkcache(filename)
             line = linecache.getline(filename, lineno, f.f_globals)
             pass
-            # print(e)
-            # print(lineno)
-            # print(line)
