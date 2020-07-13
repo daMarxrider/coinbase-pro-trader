@@ -1,10 +1,9 @@
 import Models.transaction
-from Controller import *
-import Controller.market_controller as market
 import cbpro
+from pandas import DataFrame
 
 
-class Product():
+class Product(object):
     id = None
     base_currency = None
     quote_currency = None
@@ -24,10 +23,12 @@ class Product():
     is_analyzed=False
     best_route_to_euro=[]
     euro_rate=1
+    calculated_indicators:DataFrame=None
 
     def __init__(self, id,
                  base_currency=None, quote_currency=None, own_orders=None, public_orders=None,
-                 amount=None, own_transactions=None, public_transactions=[], historic_rates=[], mfi=0,rsi=0,view_only=False,min_transaction_size=0):
+                 amount=None, own_transactions=None, public_transactions=[], historic_rates=[], mfi=0,rsi=0,view_only=False,min_transaction_size=0,
+                 calculated_indicators:DataFrame=None):
         self.id = id
         self.base_currency = base_currency
         self.quote_currency = quote_currency
@@ -44,31 +45,5 @@ class Product():
         self.is_analyzed=False
         self.best_route_to_euro=[]
         self.euro_rate=1
+        self.calculated_indicators=calculated_indicators
 
-
-    def get_best_route_to_euro(self):
-        routes=[]
-        if self.id.__contains__('EUR'):
-            self.best_route_to_euro.append(self.id)
-            self.euro_rate=float(self.rate)
-            return
-        for product in market.products:
-            try:
-                if product.euro_rate!=1 and len(route_start:=[x for x in product.best_route_to_euro if x.split('-')[0]==self.quote_currency]):
-                    calc_rate=float(self.rate)
-                    route_list=product.best_route_to_euro[product.best_route_to_euro.index(route_start[0]):]
-                    #TODO dont iterate if direct conversion to euro is possible
-                    for p_temp in market.products:
-                        if p_temp.id in route_list:#TODO fix stablecoin duplication in list error. See above comment
-                            calc_rate*=p_temp.rate*0.995
-                    routes.append({'route':[self.id]+route_list,'rate':calc_rate})
-            except:
-                pass
-        try:
-            routes.sort(key=lambda x: x['rate'],reverse=True)
-            self.best_route_to_euro=routes[0]['route']
-            self.euro_rate=routes[0]['rate']
-            return self.best_route_to_euro,self.euro_rate
-        except:
-            #no route found
-            pass

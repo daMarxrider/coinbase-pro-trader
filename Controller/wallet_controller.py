@@ -6,7 +6,7 @@ from cbpro import AuthenticatedClient
 max_trading_value=None
 wallets = []
 orders = []
-client:  AuthenticatedClient= None
+client = None
 
 def buy(product):
     if product.id.__contains__('USD') or product.view_only:

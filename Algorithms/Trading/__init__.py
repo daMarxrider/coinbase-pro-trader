@@ -1,0 +1,1 @@
+all=['rsi_based']

@@ -1,10 +1,9 @@
-
 from Controller import market_controller as market
 from Controller import wallet_controller as wallet
 
 products = []
 
-
+#TODO check for rsi to euro and send "order-chain"(i.e. buy and sell according to best_route_to_euro of product)
 def setup(plugins=[]):
     products = market.products
     while 1:
@@ -15,7 +14,6 @@ def setup(plugins=[]):
                 if product.rsi!=0:
                     x = 0
                     for order in wallet.orders:
-                        # TODO check if last order was a buy or sell of same product and prevent duplicate orders
                         if order.quote_currency in product.id and order.base_currency in product.id:
                             if order.status in ['pending', 'open']:
                                 continue
