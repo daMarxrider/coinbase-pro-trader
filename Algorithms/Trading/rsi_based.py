@@ -11,12 +11,14 @@ def setup(plugins=[]):
             for product in products:
                 if 'COMP' in product.id:
                     continue
+                #TODO func-ref check 1
                 if product.rsi!=0:
                     x = 0
                     for order in wallet.orders:
                         if order.quote_currency in product.id and order.base_currency in product.id:
                             if order.status in ['pending', 'open']:
                                 continue
+                    #TODO func-ref check 2 start
                     if product.rsi < 33:
                         if len(product.own_transactions)>0 and product.own_transactions[-1].type=='buy':
                             continue
@@ -25,6 +27,7 @@ def setup(plugins=[]):
                         if len(product.own_transactions)>0 and product.own_transactions[-1].type=='sell':
                             continue
                         wallet.sell(product)
+                    #TODO func-ref check 2 end
         except Exception as e:
             print('error during market placement')
             print(e)

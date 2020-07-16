@@ -14,6 +14,7 @@ from ta.utils import dropna
 from ta.momentum import rsi
 
 
+
 product_history = []
 
 # TODO
@@ -30,39 +31,34 @@ def calculate_indicators(product, **kwargs):
         #Addendum: maybe use less than 2 months, as Dataframe-Creation/Evaluation takes
         # approx. 6 sec and speed is key in trading
     #TODO add rsi_history to product class
-    days = 45
+    days = 14
     better_start_date = fucking_date.now() - datetime.timedelta(days)
     better_end_date = fucking_date.now()
     shortened_mfi = client.get_product_historic_rates(
         product.id, start=better_start_date, end=better_end_date, granularity=86400)
-    #received data, next request available in 1 sec
-    calculation_start=time.perf_counter()
     shortened_mfi.reverse()
-    shortened_better_data = {
-        'Open': [x[3] for x in shortened_mfi],
-        'High': [x[2] for x in shortened_mfi],
-        'Low': [x[1] for x in shortened_mfi],
-        'Close': [x[4] for x in shortened_mfi],
-        'Volume': [x[5] for x in shortened_mfi]
-    }
+    # shortened_better_data = {
+    #     'Open': [x[3] for x in shortened_mfi],
+    #     'High': [x[2] for x in shortened_mfi],
+    #     'Low': [x[1] for x in shortened_mfi],
+    #     'Close': [x[4] for x in shortened_mfi],
+    #     'Volume': [x[5] for x in shortened_mfi]
+    # }
 
-    shortened_df = pd.notna(pd.DataFrame(
-        [x[1:] for x in shortened_mfi], columns=['Open', 'High', 'Low', 'Close', 'Volume']))
-
-    shortened_rsi_value = \
-        rsi(pd.Series(data=[x[4] for x in shortened_mfi]), n=14).values[-1]
+    # shortened_df = pd.notna(pd.DataFrame(
+    #     [x[1:] for x in shortened_mfi], columns=['Open', 'High', 'Low', 'Close', 'Volume']))
+    #
+    # shortened_rsi_value = \
+    #     rsi(pd.Series(data=[x[4] for x in shortened_mfi]), n=14).values[-1]
     newer_rsi_value = \
-        rsi(pd.Series(data=[x[4] for x in shortened_mfi][:-1:]+[float(product.rate)]), n=14).values[-1]
+        rsi(pd.Series(data=[x[4] for x in shortened_mfi][:-1:]+[product.rate]), n=14).values[-1]
     product.rsi = newer_rsi_value
 
 #TODO see implementation of ta-library, extra parameter fillna might be more performant/give better results than manually dropping null values
-    complete_data = pd.DataFrame(shortened_better_data, columns=['Open', 'High', 'Low', 'Close', 'Volume'])
-    all_indicators=add_all_ta_features(complete_data,open="Open",high="High",low="Low",close="Close",volume="Volume",fillna=True)
-    product.calculated_indicators=all_indicators
-    #calculated data, put rest of api qooldown in sleep
-    rest_time=time.perf_counter()-calculation_start
-    if rest_time<1:
-        time.sleep(rest_time)
+    # complete_data = pd.DataFrame(shortened_better_data, columns=['Open', 'High', 'Low', 'Close', 'Volume'])
+    # all_indicators=add_all_ta_features(complete_data,open="Open",high="High",low="Low",close="Close",volume="Volume",fillna=True)
+    # product.calculated_indicators=all_indicators
+
 
 
 def get_history(f=calculate_indicators, **kwargs):
@@ -93,7 +89,7 @@ def get_history(f=calculate_indicators, **kwargs):
                     finally:
                         product.is_analyzed=True
                     if kwargs.get('start_early'):
-                        time.sleep(1)
+                        pass
                     else:
                         continue
 
@@ -116,7 +112,7 @@ def get_history(f=calculate_indicators, **kwargs):
                     product.historic_rates = p_history['data']
                 except Exception as e:
                     pass
-            time.sleep(1)
+            #time.sleep(1)
         print('history')
         print([x['id']+'{}, newest timestamp {}\n'.format(len(x['data']),fucking_date.fromtimestamp(x['data'][-1][0])) for x in product_history])
         print('rsi values')
@@ -127,6 +123,6 @@ def get_history(f=calculate_indicators, **kwargs):
         print('euro_rates')
         print(['{}:{}'.format(x.id,x.euro_rate) for x in market.products if x.euro_rate!=1])
         # print(product_history)
-        # time.sleep(10)
+        # #time.sleep(10)
 
 

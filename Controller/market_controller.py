@@ -22,7 +22,7 @@ def on_ticker_message(ws, message):
         #print('{}:{}'.format(message['product_id'], message['price']))
         received_product=[x for x in products if x.id == message['product_id']
          ][0]
-        received_product.rate = message['price']
+        received_product.rate = float(message['price'])
         get_best_route_to_euro(received_product)
         base_currency = message['product_id'].split(
             '-')[1] if message['side'] == 'buy' else message['product_id'].split('-')[0]
@@ -53,7 +53,7 @@ def on_open(ws):
                 'product_ids': [x.id for x in products],
                 'channels': [{'name': 'ticker'}]}
         ws.send(fuck_json.to_json(body))
-        # time.sleep(1)
+        # #time.sleep(1)
         # ws.close()
         print("thread terminating...")
     thread.start_new_thread(run, ())
@@ -84,17 +84,17 @@ def get_best_route_to_euro(inst_product):
     routes=[]
     if inst_product.id.__contains__('EUR'):
         inst_product.best_route_to_euro=[inst_product.id]
-        inst_product.euro_rate=float(inst_product.rate)
+        inst_product.euro_rate=inst_product.rate
         return
     for product in products:
         try:
             route_start = [x for x in product.best_route_to_euro if x.split('-')[0] == inst_product.quote_currency]
             if product.euro_rate!=1 and len(route_start):
-                calc_rate=float(inst_product.rate)
+                calc_rate=inst_product.rate
                 route_list=product.best_route_to_euro[product.best_route_to_euro.index(route_start[0]):]
                 for p_temp in products:
                     if p_temp.id in route_list:
-                        calc_rate*=float(p_temp.rate)*0.995
+                        calc_rate*=p_temp.rate*0.995
                 routes.append({'route':[inst_product.id]+route_list,'rate':calc_rate})
         except:
             pass
