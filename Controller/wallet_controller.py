@@ -2,6 +2,9 @@ from Controller import client_controller
 from Models.transaction import Transaction
 from Controller import market_controller as market
 from cbpro import AuthenticatedClient
+import dateutil.parser
+import datetime
+import time
 
 max_trading_value=None
 wallets = []
@@ -14,7 +17,9 @@ def buy(product):
     for order in orders:
         if order.status=='open' and order.id==product.id:
             return
-    if len([x for x in orders if x.product_id==product.id and x.type!='fee'])>0 and [x for x in orders if x.product_id==product.id and x.type!='fee'][0].type=='buy':
+    relevant_orders=[x for x in orders if x.product_id==product.id and x.type!='fee']
+    sorted(relevant_orders,key=lambda x:x.executed_at)
+    if len(relevant_orders)>0 and relevant_orders[0].type=='buy':
         return
     funds=float([x for x in wallets if x['currency']==product.id.split('-')[1]][0]['available'])
     if funds*product.euro_rate>max_trading_value:
@@ -97,6 +102,7 @@ def get_wallets():
     for wallet in wallets:
         json_orders = client.get_account_history(wallet['id'])
         for order in json_orders:
+            #time.sleep(1)
             amount = order['amount']
             if order['type']=='fee':
                 type='fee'
@@ -112,6 +118,7 @@ def get_wallets():
                 '-')[1] if order['side'] == 'buy' else order['product_id'].split('-')[0]
             quote_currency = order['product_id'].split(
                 '-')[1] if order['side'] == 'sell' else order['product_id'].split('-')[0]
+            #TODO don´t add if view only,also remove view only from market.controller
             orders.append(Transaction(
-                order['id'], base_currency, quote_currency,product_id=order['product_id'], fee=order['fill_fees'], base_value=amount, quote_value=order['size']if 'size' in dir(order) else '0', status=order['status'],type=type))
+                order['id'], base_currency, quote_currency,product_id=order['product_id'], fee=order['fill_fees'], base_value=amount, quote_value=order['size']if 'size' in dir(order) else '0', status=order['status'],type=type,executed_timestamp= dateutil.parser.isoparse(order['done_at'])))
     return wallets, orders

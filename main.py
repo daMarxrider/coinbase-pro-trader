@@ -15,6 +15,10 @@ import Controller.market_controller as market
 import Controller.wallet_controller as wallet
 import Controller.history_controller as history
 
+
+import joblib
+from joblib import delayed
+
 import re
 # x=[]
 # def find(name,path):
@@ -83,23 +87,29 @@ def configure():
 
 
 def main():
+    global pr
     configure()
     wallet.get_wallets()
     for w in wallet.wallets:
         print(w)
     products = market.products
+
     thread.start_new_thread(market.get_products_feed, ())
 
     # #TODO require user input for funtion(s)
     # algoritms_to_use=[]
     # for algo in args.algorithms:
     #     algoritms_to_use.append(__import__('Algorithms', globals(), locals(), fromlist=[algo]))
-
-    thread.start_new_thread(history.get_history, ([history.calculate_indicators],), {'start_early':True})
-    thread.start_new_thread(cross_market_evaluation.setup, ())
-    thread.start_new_thread(rsi_based.setup, ())
+    funcs=[{'function':history.get_history,'params':(history.calculate_indicators),'kwargs':{'start_early':True}},
+           {'function':cross_market_evaluation.setup,'params':(),'kwargs':{}},
+           {'function':rsi_based.setup,'params':(),'kwargs':{}}]
+    joblib.Parallel(n_jobs=len(funcs),require='sharedmem',pre_dispatch="all",verbose=100)(delayed(func['function'])(func['params'],**func['kwargs']) for func in funcs)
+    # with joblib.parallel_backend("loky",):
+       # thread.start_new_thread(history.get_history, ([history.calculate_indicators],), {'start_early':True})
+    # history.get_history(history.calculate_indicators,start_early=True)
+    # thread.start_new_thread(cross_market_evaluation.setup, ())
+    # thread.start_new_thread(rsi_based.setup, ())
     while 1:
-        # threads keep running, but this prevents the script from closing without using a shitty framework
         time.sleep(3600)
 
 

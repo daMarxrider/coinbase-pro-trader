@@ -12,6 +12,7 @@ from ta import add_all_ta_features
 from ta.utils import dropna
 from ta.momentum import rsi
 
+#TODO extract logic from history_controller and actually use this
 def calculate_rsi(product,**kwargs):
     shortened_mfi = []
     days = 14
@@ -20,7 +21,7 @@ def calculate_rsi(product,**kwargs):
     shortened_mfi = client.get_product_historic_rates(
         product.id, start=better_start_date, end=better_end_date, granularity=86400)
     shortened_mfi.reverse()
-    time.sleep(1)
+    #time.sleep(1)
     shortened_better_data = {
         'Open': [x[3] for x in shortened_mfi],
         'High': [x[2] for x in shortened_mfi],

@@ -6,12 +6,15 @@ from datetime import timedelta, datetime as fucking_date
 from Controller import market_controller as market
 
 evaluated_products = []
-product_history = history.product_history
+product_history = []
 products=[]
 
 
 def setup():
-    global evaluated_products, product_history, history
+    global evaluated_products, product_history
+    while 'history.product_history' not in dir(history):
+        pass
+    product_history=history.product_history
     evaluated_products = []
     while 1:
         try:

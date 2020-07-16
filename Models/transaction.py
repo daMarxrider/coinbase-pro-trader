@@ -12,8 +12,9 @@ class Transaction:
     rate = None
     status=None
     type=None
+    executed_timestamp=None
 
-    def __init__(self, id, base_currency, quote_currency,product_id=None, fee=None, base_value=None, quote_value=None, rate=None,status=None,type=None):
+    def __init__(self, id, base_currency, quote_currency,product_id=None, fee=None, base_value=None, quote_value=None, rate=None,status=None,type=None,executed_timestamp=None):
         self.id = id
         self.base_currency = base_currency
         self.quote_currency = quote_currency
@@ -24,3 +25,4 @@ class Transaction:
         self.rate = rate
         self.status=status
         self.type=type
+        self.executed_timestamp=executed_timestamp
