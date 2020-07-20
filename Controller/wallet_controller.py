@@ -11,86 +11,43 @@ wallets = []
 orders = []
 client = None
 
+def hold(product):
+    pass
+
 def buy(product):
-    if product.id.__contains__('USD') or product.view_only:
-        return
-    for order in orders:
-        if order.status=='open' and order.id==product.id:
-            return
-    relevant_orders=[x for x in orders if x.product_id==product.id and x.type!='fee']
-    sorted(relevant_orders,key=lambda x:x.executed_at)
-    if len(relevant_orders)>0 and relevant_orders[0].type=='buy':
-        return
-    funds=float([x for x in wallets if x['currency']==product.id.split('-')[1]][0]['available'])
-    if funds*product.euro_rate>max_trading_value:
-        funds=max_trading_value/product.euro_rate
-    if funds!=0 and (product.min_transaction_size is None or product.min_transaction_size<funds):
-        order=client.place_market_order(product.id,'buy',size=funds)
-        if 'message' not in order.keys():
-            product.own_transactions.append(Transaction(product.id,'','',type='buy'))
-            get_wallets()
-            return order
-        if order['message'].__contains__('too accurate'):
-            decimals=len(order['message'].split('.')[-1])
-            order=client.place_market_order(product.id,'buy',size=funds.__round__(decimals))
-        # order=client.place_market_order(product.id,'buy',size=float(funds).__round__(5))
-        try:
-            if order['message'].__contains__('funds is too small. Minimum size is 10.00000000') or order['message'].__contains__('Trading pair not available'):
-                product.view_only=True
-            if order['message'].__contains__('too small'):
-                product.min_transaction_size=float(order['message'].split(' ')[-1])
-                x=0
-            if order['message']=='Limit only mode':
-                order=client.place_limit_order(product.id,'buy',product.rate,funds)
-                if order['message'].__contains__('too small'):
-                    product.min_transaction_size = float(order['message'].split(' ')[-1])
-                else:
-                    x=0
-            else:
-                x=0
-        except:
-            product.own_transactions.append(Transaction(product.id,'','',type='buy'))
-            get_wallets()
+    execute_order("buy",product)
 
 def sell(product):
-    if product.id.__contains__('USD') or product.view_only:
+    execute_order("sell",product)
+
+
+def execute_order(type,product,funds=None):
+    if not funds:
+        funds = float([x for x in wallets if x['currency'] == product.id.split('-')[1]][0]['available'])
+        if funds * product.euro_rate > max_trading_value:
+            funds = max_trading_value / product.euro_rate
+    if product.trading_disabled:
         return
-    for order in orders:
-        if order.status=='open' and order.id==product.id:
-            return
-    if len([x for x in orders if x.product_id==product.id and x.type!='fee'])>0 and [x for x in orders if x.product_id==product.id and x.type!='fee'][0].type=='sell':
+    relevant_orders = [x for x in orders if x.product_id == product.id and x.type != 'fee']
+    sorted(relevant_orders, key=lambda x: x.executed_at)
+    if len(relevant_orders) > 0 and relevant_orders[0].type == type:  # TODO check if date is old enough to start new transaction ~7days
         return
-    funds=float([x for x in wallets if x['currency']==product.id.split('-')[0]][0]['available'])
-    if funds*product.euro_rate>max_trading_value:
-        funds=max_trading_value/product.euro_rate
-    if funds!=0 and (product.min_transaction_size is None or product.min_transaction_size<funds):
-        order=client.place_market_order(product.id,'sell',size=funds)
+
+    if funds > product.min_transaction_size:
+        if product.limit_only:
+            order = client.place_limit_order(product.id, type, product.rate, funds)
+        else:
+            order = client.place_market_order(product.id, type, size=funds)
         if 'message' not in order.keys():
-            product.own_transactions.append(Transaction(product.id,'','',type='buy'))
+            # product.own_transactions.append(Transaction(product.id, '', '', type=type))
             get_wallets()
             return order
         if order['message'].__contains__('too accurate'):
-            decimals=len(order['message'].split('.')[-1])
-            order=client.place_market_order(product.id,'sell',size=funds.__round__(decimals))
-        # order=client.place_market_order(product.id,'sell',size=float(funds).__round__(5))
-        try:
-            if order['message'].__contains__('funds is too small. Minimum size is 10.00000000') or order['message'].__contains__('Trading pair not available'):
-                product.view_only=True
-            if order['message'].__contains__('too small'):
-                product.min_transaction_size=float(order['message'].split(' ')[-1])
-                x=0
-            if order['message']=='Limit only mode':
-                order=client.place_limit_order(product.id,'sell',product.rate,funds)
-                if order['message'].__contains__('too small'):
-                    product.min_transaction_size = float(order['message'].split(' ')[-1])
-                else:
-                    x=0
-                x=0
-            else:
-                x=0
-        except:
-            product.own_transactions.append(Transaction(product.id,'','',type='sell'))
-            get_wallets()
+            decimals = len(order['message'].split('.')[-1])
+            execute_order(type,product,funds=funds.__round__(decimals))
+        else:
+            x=0
+
 
 
 def get_wallets():
@@ -118,7 +75,11 @@ def get_wallets():
                 '-')[1] if order['side'] == 'buy' else order['product_id'].split('-')[0]
             quote_currency = order['product_id'].split(
                 '-')[1] if order['side'] == 'sell' else order['product_id'].split('-')[0]
-            #TODO don´t add if view only,also remove view only from market.controller
+            #TODO also add order to product.own_orders
             orders.append(Transaction(
-                order['id'], base_currency, quote_currency,product_id=order['product_id'], fee=order['fill_fees'], base_value=amount, quote_value=order['size']if 'size' in dir(order) else '0', status=order['status'],type=type,executed_timestamp= dateutil.parser.isoparse(order['done_at'])))
+                order['id'], base_currency, quote_currency,product_id=order['product_id'],
+                fee=order['fill_fees'], base_value=amount,
+                quote_value=order['size']if 'size' in dir(order) else '0',
+                status=order['status'],type=type,
+                executed_timestamp= dateutil.parser.isoparse(order['done_at'])))
     return wallets, orders
