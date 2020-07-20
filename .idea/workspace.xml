@@ -2,14 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="14a06406-c4d2-4ab0-9262-bc43a5dacf18" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/Algorithms/Prediction/cross_market_evaluation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Algorithms/Prediction/cross_market_evaluation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Algorithms/Prediction/rsi_based.py" beforeDir="false" afterPath="$PROJECT_DIR$/Algorithms/Prediction/rsi_based.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vim/coc-settings.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Algorithms/Trading/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/Algorithms/Trading/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Algorithms/Trading/rsi_based.py" beforeDir="false" afterPath="$PROJECT_DIR$/Algorithms/Trading/rsi_based.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Controller/client_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/client_controller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Controller/history_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/history_controller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Controller/market_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/market_controller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Controller/wallet_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/wallet_controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/transaction.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/transaction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/product.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/product.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -77,69 +78,110 @@
       <screen x="-5120" y="57" width="1280" height="1024" />
     </state>
     <state x="-4888" y="227" key="#Inspections/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594912499340" />
-    <state x="-4761" y="195" key="#main" timestamp="1594916994678">
+    <state x="-4761" y="195" key="#main" timestamp="1595025854503">
       <screen x="-5120" y="57" width="1280" height="1024" />
     </state>
+    <state x="-4761" y="195" key="#main/-3840.-1080.2560.1440/-5120.57.1280.1024/0.0.1920.1080@-5120.57.1280.1024" timestamp="1595025854503" />
     <state x="-4761" y="195" key="#main/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594916994678" />
-    <state x="-4391" y="204" key="#xdebugger.evaluate" timestamp="1594920144856">
+    <state x="-1019" y="1286" width="490" height="581" key="#xdebugger.evaluate" timestamp="1595261580112">
+      <screen x="-1280" y="1137" width="1280" height="1024" />
+    </state>
+    <state x="-4529" y="446" key="#xdebugger.evaluate/-3840.-1080.2560.1440/-5120.57.1280.1024/0.0.1920.1080@-5120.57.1280.1024" timestamp="1595185652845" />
+    <state x="-4709" y="212" width="490" height="581" key="#xdebugger.evaluate/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594962088214" />
+    <state x="-5007" y="426" key="#xdebugger.evaluate/0.0.1920.1080/-5120.57.1280.1024/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1595202312386" />
+    <state x="-1019" y="1286" key="#xdebugger.evaluate/0.0.2560.1440/-1280.1137.1280.1024/3840.1080.1920.1080@-1280.1137.1280.1024" timestamp="1595261580112" />
+    <state width="839" height="466" key="DebuggerActiveHint" timestamp="1595109842364">
       <screen x="-5120" y="57" width="1280" height="1024" />
     </state>
-    <state x="-4391" y="204" key="#xdebugger.evaluate/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594920144856" />
-    <state width="728" height="466" key="DebuggerActiveHint" timestamp="1594912787887">
-      <screen x="-5120" y="57" width="1280" height="1024" />
-    </state>
-    <state width="728" height="466" key="DebuggerActiveHint/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594912787887" />
+    <state width="839" height="466" key="DebuggerActiveHint/-3840.-1080.2560.1440/-5120.57.1280.1024/0.0.1920.1080@-5120.57.1280.1024" timestamp="1595109842364" />
+    <state width="728" height="466" key="DebuggerActiveHint/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594965217734" />
     <state x="-4701" y="323" key="FileChooserDialogImpl" timestamp="1594909260703">
       <screen x="-5120" y="57" width="1280" height="1024" />
     </state>
     <state x="-4701" y="323" key="FileChooserDialogImpl/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594909260703" />
-    <state width="1259" height="300" key="GridCell.Tab.0.bottom" timestamp="1594921084116">
+    <state width="1259" height="296" key="GridCell.Tab.0.bottom" timestamp="1595263778367">
       <screen x="-5120" y="57" width="1280" height="1024" />
     </state>
-    <state width="1259" height="300" key="GridCell.Tab.0.bottom/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594921084116" />
-    <state width="1259" height="300" key="GridCell.Tab.0.center" timestamp="1594921084115">
+    <state width="1259" height="296" key="GridCell.Tab.0.bottom/-3840.-1080.2560.1440/-5120.57.1280.1024/0.0.1920.1080@-5120.57.1280.1024" timestamp="1595263778367" />
+    <state width="1259" height="300" key="GridCell.Tab.0.bottom/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1595006061363" />
+    <state width="1259" height="296" key="GridCell.Tab.0.bottom/0.0.1920.1080/-5120.57.1280.1024/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1595206092981" />
+    <state width="1259" height="296" key="GridCell.Tab.0.bottom/0.0.2560.1440/-1280.1137.1280.1024/3840.1080.1920.1080@-1280.1137.1280.1024" timestamp="1595261656909" />
+    <state width="1259" height="296" key="GridCell.Tab.0.center" timestamp="1595263778367">
       <screen x="-5120" y="57" width="1280" height="1024" />
     </state>
-    <state width="1259" height="300" key="GridCell.Tab.0.center/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594921084115" />
-    <state width="1259" height="300" key="GridCell.Tab.0.left" timestamp="1594921084115">
+    <state width="1259" height="296" key="GridCell.Tab.0.center/-3840.-1080.2560.1440/-5120.57.1280.1024/0.0.1920.1080@-5120.57.1280.1024" timestamp="1595263778367" />
+    <state width="1259" height="300" key="GridCell.Tab.0.center/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1595006061363" />
+    <state width="1259" height="296" key="GridCell.Tab.0.center/0.0.1920.1080/-5120.57.1280.1024/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1595206092981" />
+    <state width="1259" height="296" key="GridCell.Tab.0.center/0.0.2560.1440/-1280.1137.1280.1024/3840.1080.1920.1080@-1280.1137.1280.1024" timestamp="1595261656909" />
+    <state width="1259" height="296" key="GridCell.Tab.0.left" timestamp="1595263778366">
       <screen x="-5120" y="57" width="1280" height="1024" />
     </state>
-    <state width="1259" height="300" key="GridCell.Tab.0.left/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594921084115" />
-    <state width="1259" height="300" key="GridCell.Tab.0.right" timestamp="1594921084116">
+    <state width="1259" height="296" key="GridCell.Tab.0.left/-3840.-1080.2560.1440/-5120.57.1280.1024/0.0.1920.1080@-5120.57.1280.1024" timestamp="1595263778366" />
+    <state width="1259" height="300" key="GridCell.Tab.0.left/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1595006061363" />
+    <state width="1259" height="296" key="GridCell.Tab.0.left/0.0.1920.1080/-5120.57.1280.1024/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1595206092981" />
+    <state width="1259" height="296" key="GridCell.Tab.0.left/0.0.2560.1440/-1280.1137.1280.1024/3840.1080.1920.1080@-1280.1137.1280.1024" timestamp="1595261656909" />
+    <state width="1259" height="296" key="GridCell.Tab.0.right" timestamp="1595263778367">
       <screen x="-5120" y="57" width="1280" height="1024" />
     </state>
-    <state width="1259" height="300" key="GridCell.Tab.0.right/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594921084116" />
-    <state width="1259" height="300" key="GridCell.Tab.1.bottom" timestamp="1594921084116">
+    <state width="1259" height="296" key="GridCell.Tab.0.right/-3840.-1080.2560.1440/-5120.57.1280.1024/0.0.1920.1080@-5120.57.1280.1024" timestamp="1595263778367" />
+    <state width="1259" height="300" key="GridCell.Tab.0.right/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1595006061363" />
+    <state width="1259" height="296" key="GridCell.Tab.0.right/0.0.1920.1080/-5120.57.1280.1024/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1595206092981" />
+    <state width="1259" height="296" key="GridCell.Tab.0.right/0.0.2560.1440/-1280.1137.1280.1024/3840.1080.1920.1080@-1280.1137.1280.1024" timestamp="1595261656909" />
+    <state width="1259" height="296" key="GridCell.Tab.1.bottom" timestamp="1595263778309">
       <screen x="-5120" y="57" width="1280" height="1024" />
     </state>
-    <state width="1259" height="300" key="GridCell.Tab.1.bottom/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594921084116" />
-    <state width="1259" height="300" key="GridCell.Tab.1.center" timestamp="1594921084116">
+    <state width="1259" height="296" key="GridCell.Tab.1.bottom/-3840.-1080.2560.1440/-5120.57.1280.1024/0.0.1920.1080@-5120.57.1280.1024" timestamp="1595263778309" />
+    <state width="1259" height="300" key="GridCell.Tab.1.bottom/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1595006061363" />
+    <state width="1259" height="296" key="GridCell.Tab.1.bottom/0.0.1920.1080/-5120.57.1280.1024/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1595206092982" />
+    <state width="1259" height="296" key="GridCell.Tab.1.bottom/0.0.2560.1440/-1280.1137.1280.1024/3840.1080.1920.1080@-1280.1137.1280.1024" timestamp="1595261677383" />
+    <state width="1259" height="296" key="GridCell.Tab.1.center" timestamp="1595263778309">
       <screen x="-5120" y="57" width="1280" height="1024" />
     </state>
-    <state width="1259" height="300" key="GridCell.Tab.1.center/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594921084116" />
-    <state width="1259" height="300" key="GridCell.Tab.1.left" timestamp="1594921084116">
+    <state width="1259" height="296" key="GridCell.Tab.1.center/-3840.-1080.2560.1440/-5120.57.1280.1024/0.0.1920.1080@-5120.57.1280.1024" timestamp="1595263778309" />
+    <state width="1259" height="300" key="GridCell.Tab.1.center/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1595006061363" />
+    <state width="1259" height="296" key="GridCell.Tab.1.center/0.0.1920.1080/-5120.57.1280.1024/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1595206092982" />
+    <state width="1259" height="296" key="GridCell.Tab.1.center/0.0.2560.1440/-1280.1137.1280.1024/3840.1080.1920.1080@-1280.1137.1280.1024" timestamp="1595261677383" />
+    <state width="1259" height="296" key="GridCell.Tab.1.left" timestamp="1595263778309">
       <screen x="-5120" y="57" width="1280" height="1024" />
     </state>
-    <state width="1259" height="300" key="GridCell.Tab.1.left/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594921084116" />
-    <state width="1259" height="300" key="GridCell.Tab.1.right" timestamp="1594921084116">
+    <state width="1259" height="296" key="GridCell.Tab.1.left/-3840.-1080.2560.1440/-5120.57.1280.1024/0.0.1920.1080@-5120.57.1280.1024" timestamp="1595263778309" />
+    <state width="1259" height="300" key="GridCell.Tab.1.left/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1595006061363" />
+    <state width="1259" height="296" key="GridCell.Tab.1.left/0.0.1920.1080/-5120.57.1280.1024/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1595206092982" />
+    <state width="1259" height="296" key="GridCell.Tab.1.left/0.0.2560.1440/-1280.1137.1280.1024/3840.1080.1920.1080@-1280.1137.1280.1024" timestamp="1595261677383" />
+    <state width="1259" height="296" key="GridCell.Tab.1.right" timestamp="1595263778309">
       <screen x="-5120" y="57" width="1280" height="1024" />
     </state>
-    <state width="1259" height="300" key="GridCell.Tab.1.right/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594921084116" />
+    <state width="1259" height="296" key="GridCell.Tab.1.right/-3840.-1080.2560.1440/-5120.57.1280.1024/0.0.1920.1080@-5120.57.1280.1024" timestamp="1595263778309" />
+    <state width="1259" height="300" key="GridCell.Tab.1.right/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1595006061363" />
+    <state width="1259" height="296" key="GridCell.Tab.1.right/0.0.1920.1080/-5120.57.1280.1024/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1595206092982" />
+    <state width="1259" height="296" key="GridCell.Tab.1.right/0.0.2560.1440/-1280.1137.1280.1024/3840.1080.1920.1080@-1280.1137.1280.1024" timestamp="1595261677383" />
     <state x="-4979" y="211" key="SettingsEditor" timestamp="1594912401971">
       <screen x="-5120" y="57" width="1280" height="1024" />
     </state>
     <state x="-4979" y="211" key="SettingsEditor/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594912401971" />
+    <state x="-4759" y="309" width="570" height="524" key="StructurePopup" timestamp="1595029567986">
+      <screen x="-5120" y="57" width="1280" height="1024" />
+    </state>
+    <state x="-4759" y="309" width="570" height="524" key="StructurePopup/-3840.-1080.2560.1440/-5120.57.1280.1024/0.0.1920.1080@-5120.57.1280.1024" timestamp="1595029567986" />
+    <state x="-4759" y="309" width="540" height="524" key="StructurePopup/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594948711281" />
+    <state width="648" height="520" key="XDebugger.FullValuePopup" timestamp="1595108966785">
+      <screen x="-5120" y="57" width="1280" height="1024" />
+    </state>
+    <state width="648" height="520" key="XDebugger.FullValuePopup/-3840.-1080.2560.1440/-5120.57.1280.1024/0.0.1920.1080@-5120.57.1280.1024" timestamp="1595108966785" />
     <state x="-4671" y="486" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1594910563431">
       <screen x="-5120" y="57" width="1280" height="1024" />
     </state>
     <state x="-4671" y="486" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594910563431" />
-    <state x="-4784" y="301" width="737" height="606" key="find.popup" timestamp="1594900543090">
+    <state x="-994" y="1378" width="737" height="606" key="find.popup" timestamp="1595260262796">
+      <screen x="-1280" y="1137" width="1280" height="1024" />
+    </state>
+    <state x="-4748" y="379" width="737" height="606" key="find.popup/-3840.-1080.2560.1440/-5120.57.1280.1024/0.0.1920.1080@-5120.57.1280.1024" timestamp="1595038516763" />
+    <state x="-4748" y="379" width="737" height="606" key="find.popup/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594961877071" />
+    <state x="-994" y="1378" width="737" height="606" key="find.popup/0.0.2560.1440/-1280.1137.1280.1024/3840.1080.1920.1080@-1280.1137.1280.1024" timestamp="1595260262796" />
+    <state x="-4817" y="278" width="672" height="678" key="search.everywhere.popup" timestamp="1595263440670">
       <screen x="-5120" y="57" width="1280" height="1024" />
     </state>
-    <state x="-4784" y="301" width="737" height="606" key="find.popup/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594900543090" />
-    <state x="-4817" y="278" width="672" height="678" key="search.everywhere.popup" timestamp="1594907645607">
-      <screen x="-5120" y="57" width="1280" height="1024" />
-    </state>
+    <state x="-4817" y="278" width="672" height="678" key="search.everywhere.popup/-3840.-1080.2560.1440/-5120.57.1280.1024/0.0.1920.1080@-5120.57.1280.1024" timestamp="1595263440670" />
     <state x="-4817" y="278" width="672" height="678" key="search.everywhere.popup/-5120.57.1280.1024/0.0.1920.1080/-3840.-1080.2560.1440@-5120.57.1280.1024" timestamp="1594907645607" />
   </component>
   <component name="XDebuggerManager">
@@ -147,89 +189,23 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Controller/client_controller.py</url>
-          <line>45</line>
+          <line>43</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Controller/client_controller.py</url>
-          <line>36</line>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <condition expression="'message' in res" language="Python" />
-          <url>file://$PROJECT_DIR$/Controller/client_controller.py</url>
-          <line>37</line>
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Algorithms/Trading/rsi_based.py</url>
-          <line>23</line>
+          <line>25</line>
           <option name="timeStamp" value="20" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Algorithms/Trading/rsi_based.py</url>
-          <line>27</line>
+          <line>29</line>
           <option name="timeStamp" value="23" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Controller/wallet_controller.py</url>
-          <line>59</line>
-          <option name="timeStamp" value="24" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Controller/wallet_controller.py</url>
-          <line>66</line>
-          <option name="timeStamp" value="25" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Controller/wallet_controller.py</url>
-          <line>73</line>
-          <option name="timeStamp" value="26" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Controller/wallet_controller.py</url>
-          <line>82</line>
-          <option name="timeStamp" value="27" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Controller/wallet_controller.py</url>
-          <line>27</line>
-          <option name="timeStamp" value="28" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Controller/wallet_controller.py</url>
-          <line>34</line>
-          <option name="timeStamp" value="29" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Controller/wallet_controller.py</url>
-          <line>43</line>
-          <option name="timeStamp" value="30" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Controller/wallet_controller.py</url>
-          <line>21</line>
-          <option name="timeStamp" value="31" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Controller/wallet_controller.py</url>
-          <line>16</line>
-          <option name="timeStamp" value="32" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/main.py</url>
-          <line>106</line>
-          <option name="timeStamp" value="50" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Algorithms/Prediction/cross_market_evaluation.py</url>
           <line>17</line>
           <option name="timeStamp" value="53" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/main.py</url>
-          <line>105</line>
-          <option name="timeStamp" value="55" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Algorithms/Prediction/cross_market_evaluation.py</url>
@@ -248,7 +224,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>111</line>
+          <line>82</line>
           <option name="timeStamp" value="60" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -256,14 +232,43 @@
           <line>14</line>
           <option name="timeStamp" value="65" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Algorithms/Trading/rsi_based.py</url>
+          <line>21</line>
+          <option name="timeStamp" value="76" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Controller/history_controller.py</url>
+          <line>127</line>
+          <option name="timeStamp" value="87" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Controller/history_controller.py</url>
+          <line>126</line>
+          <option name="timeStamp" value="120" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Controller/wallet_controller.py</url>
+          <line>48</line>
+          <option name="timeStamp" value="137" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Controller/wallet_controller.py</url>
+          <line>37</line>
+          <option name="timeStamp" value="138" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Controller/wallet_controller.py</url>
+          <line>39</line>
+          <option name="timeStamp" value="140" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
-        <watch expression="market" language="Python" />
-        <watch expression="market.products" language="Python" />
-        <watch expression="market.products.index(product)" language="Python" />
-        <watch expression="pr" language="Python" />
+        <watch expression="conf['buy'](product)" language="Python" />
+        <watch expression="conf['sell'](product)" language="Python" />
+        <watch expression="x" language="Python" />
       </configuration>
     </watches-manager>
   </component>

@@ -1,1 +1,1 @@
-all=['rsi_based']
+all=['rsi_based',"trade_all_indicator"]
