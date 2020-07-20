@@ -33,8 +33,6 @@ def decorator(f):
             if message.__contains__('rate limit exceeded'):
                 time.sleep(1)
                 res=f(*args,**kwargs,)
-            else:
-                x=0
         return res
         #
         # try:

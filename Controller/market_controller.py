@@ -64,7 +64,8 @@ def init_products():
     if len(products) == 0:
         for product in client.get_products():
             products.append(Product(
-                id=product['id'], base_currency=product['base_currency'], quote_currency=product['quote_currency'],view_only= product['trading_disabled'],min_transaction_size=product['min_market_funds']))
+                json=product
+                ))
     return products
 
 #semi-important TODO:
