@@ -3,8 +3,9 @@ import sys
 import types
 
 import cbpro
+from cbpro import AuthenticatedClient
 import time
-client = None
+client: AuthenticatedClient= None
 last_request=None
 
 #TODO insert hook/decorator into client requests, to prevent exceeded rate limit
@@ -28,20 +29,23 @@ def decorator(f):
     def wrapper(*args,**kwargs):
         global last_request
         res=f(*args,**kwargs,)
-        if 'message' in res:
+        try:
+            if type(res)in [list,types.GeneratorType]:
+                results=[]
+                for x in res:
+                    results.append(x)
+            else:
+                results={}
+                for key,value in res.items():
+                    results[key]=value
+        except:
+            results=res
+        if 'message' in results:
             message=res['message']
             if message.__contains__('rate limit exceeded'):
                 time.sleep(1)
                 res=f(*args,**kwargs,)
-        return res
-        #
-        # try:
-        #     rest_time=1-(time.perf_counter()-last_request)
-        #     time.sleep(rest_time)
-        #     last_request=time.perf_counter()
-        # except:
-        #     last_request=time.perf_counter()
-        # return f(*args,**kwargs,)
+        return results
     return wrapper
 
 def setup_client(config):

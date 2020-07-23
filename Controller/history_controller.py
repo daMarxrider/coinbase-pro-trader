@@ -123,6 +123,7 @@ def calculate_indicators(product, **kwargs):
                 upsert=True)
         except:
             print("Reminder to make a db system completely from scratch")
+    mongo.close()
     #i swear to god, this is the last time I use a module, I didn´t write myself
     # res=db_coll.update_many({},y,upsert=True)
     # all_indicators.
