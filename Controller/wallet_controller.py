@@ -1,3 +1,5 @@
+import math
+from cbpro import AuthenticatedClient
 from Controller import client_controller
 from Models.transaction import Transaction
 from Controller import market_controller as market
@@ -5,11 +7,12 @@ from cbpro import AuthenticatedClient
 import dateutil.parser
 import datetime
 import time
+import sys,linecache,inspect
 
 max_trading_value=None
 wallets = []
 orders = []
-client = None
+client:AuthenticatedClient = None
 
 def hold(product):
     pass
@@ -22,31 +25,58 @@ def sell(product):
 
 
 def execute_order(type,product,funds=None):
-    if not funds:
-        funds = float([x for x in wallets if x['currency'] == product.id.split('-')[1]][0]['available'])
-        if funds * product.euro_rate > max_trading_value:
-            funds = max_trading_value / product.euro_rate
-    if product.trading_disabled:
-        return
-    relevant_orders = [x for x in orders if x.product_id == product.id and x.type != 'fee']
-    sorted(relevant_orders, key=lambda x: x.executed_at)
-    if len(relevant_orders) > 0 and relevant_orders[0].type == type:  # TODO check if date is old enough to start new transaction ~7days
-        return
+    try:
+        if product.trading_disabled:
+            return
+        if not funds:
+            try:
+                if type=='buy':
+                    index=1
+                elif type=="sell":
+                    index=0
+                for wallet in wallets:
+                    if wallet['currency'] == product.id.split('-')[index]:
+                        break
+                funds = float(wallet['available'])
+                min_funds=['base_min_size','min_market_funds']
+                if funds<float(getattr(product,min_funds[index])):#TODO figure correct attributes out
+                    return
+            except:
+                funds=float(product.base_min_size)
+            if funds * product.euro_rate > max_trading_value:
+                funds = max_trading_value / product.euro_rate
+        json_orders = client.get_account_history(wallet['id'])
+        relevant_orders = [x for x in json_orders if 'product_id' in x['details']
+                           and x['details']['product_id'] == product.id and x['type']!='fee']
+        sorted(relevant_orders, key=lambda x: x['created_at'])
+        if len(relevant_orders) > 0 and (type=='buy' and float(relevant_orders[0]['amount'])>0
+                or type=='sell' and float(relevant_orders[0]['amount'])<0)\
+                and datetime.datetime.strptime(relevant_orders[0]['created_at'],  "%Y-%m-%dT%H:%M:%S.%fZ")>(datetime.datetime.now()-datetime.timedelta(7)):  # TODO check if date is old enough to start new transaction ~7days
+            return
 
-    if funds > product.min_transaction_size:
-        if product.limit_only:
-            order = client.place_limit_order(product.id, type, product.rate, funds)
-        else:
-            order = client.place_market_order(product.id, type, size=funds)
-        if 'message' not in order.keys():
-            # product.own_transactions.append(Transaction(product.id, '', '', type=type))
-            get_wallets()
-            return order
-        if order['message'].__contains__('too accurate'):
-            decimals = len(order['message'].split('.')[-1])
-            execute_order(type,product,funds=funds.__round__(decimals))
-        else:
-            x=0
+        if not product.min_transaction_size or funds > product.min_transaction_size:
+            if product.limit_only:
+                order = client.place_limit_order(product.id, type, product.rate, size=funds)
+            else:
+                order = client.place_market_order(product.id, type, size=funds)
+            if 'message' not in order.keys():
+                # product.own_transactions.append(Transaction(product.id, '', '', type=type))
+                get_wallets()
+                return order
+            if order['message'].__contains__('too accurate'):
+                decimals = len(order['message'].rstrip('0').split('.')[-1])
+                funds=funds*0.99
+                funds=math.floor(funds*float(10**decimals))/float(10**decimals)
+                execute_order(type,product,funds=funds.__round__(decimals))
+            else:
+                x=0
+
+    except Exception as e:
+        exc_type, exc_obj, tb = sys.exc_info()
+        f = tb.tb_frame
+        lineno = tb.tb_lineno
+        filename = f.f_code.co_filename
+        print(exc_obj)
 
 
 
@@ -56,8 +86,8 @@ def get_wallets():
         client = client_controller.client
     wallets = client.get_accounts()
     orders = []
-    for wallet in wallets:
-        json_orders = client.get_account_history(wallet['id'])
+    for product in market.products:
+        json_orders = list(client.get_orders(product.id))
         for order in json_orders:
             #time.sleep(1)
             amount = order['amount']

@@ -1,3 +1,5 @@
+import sys
+import linecache
 from Controller import market_controller as market, wallet_controller as wallet
 
 products = []
@@ -35,10 +37,13 @@ def setup(indicators=[]):
                         else:
                             votes.append("hold")
                     for action in set(votes):
-                        if 1/(len(votes)/votes.count(action))>70:
+                        if 1/(len(votes)/votes.count(action))>0.70:
                             getattr(wallet,action)(product)
-                except:
-                    pass
+                except Exception as e:
+                    exc_type, exc_obj, tb = sys.exc_info()
+                    f = tb.tb_frame
+                    lineno = tb.tb_lineno
+                    filename = f.f_code.co_filename
         except Exception as e:
             print('error during market placement')
             print(e)
