@@ -86,8 +86,8 @@ def get_wallets():
         client = client_controller.client
     wallets = client.get_accounts()
     orders = []
-    for product in market.products:
-        json_orders = list(client.get_orders(product.id))
+    for wallet in wallets:
+        json_orders = client.get_account_history(wallet['id'])
         for order in json_orders:
             #time.sleep(1)
             amount = order['amount']
