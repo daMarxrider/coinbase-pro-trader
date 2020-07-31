@@ -36,8 +36,8 @@ def get_data_for_timespan(start: datetime, end: datetime, product):
             # if abs(data[i]['Timestamp'] - wanted_dates[0]) > abs(data[i - 1]['Timestamp'] - wanted_dates[0]):
             #     dates.append(data[i - 1])
             #     wanted_dates.pop(0)
-            if (fucking_date.fromtimestamp(data[i]['Timestamp']) - fucking_date.fromtimestamp(
-                    wanted_dates[0])).total_seconds() < 43200:
+            if abs((fucking_date.fromtimestamp(data[i]['Timestamp']) - fucking_date.fromtimestamp(
+                    wanted_dates[0])).total_seconds()) < 43200:
                 dates.append(data[i])
                 wanted_dates.pop(0)
         except Exception as e:
@@ -53,17 +53,14 @@ def get_data_for_timespan(start: datetime, end: datetime, product):
 
             "Product": product.id,
             "Timestamp": datetime.datetime.combine(datetime.datetime.today(), datetime.time()).timestamp(),
-            "Low": today['low'],
-            "High": today['high'],
-            "Open": today['open'],
-            "Close": today['last'],
-            "Volume": today['volume']
+            "Low": float(today['low']),
+            "High": float(today['high']),
+            "Open": float(today['open']),
+            "Close": float(today['last']),
+            "Volume": float(today['volume'])
         }
         dates.append(parsed_today)
-        try:
-            mongo.close()
-        except:
-            pass
+        mongo.close()
         return dates
     else:
         for i in range(0, wanted_dates.__len__()):
@@ -73,7 +70,7 @@ def get_data_for_timespan(start: datetime, end: datetime, product):
         if wanted_dates[-1] == fucking_date.now().date():
             wanted_dates.pop(-1)
             data.append(client.get_product_24hr_stats(product.id))
-        data.extend(client.get_product_historic_rates(product.id, start=wanted_dates[0], end=wanted_dates[-1],
+        data.extend(client.get_product_historic_rates(product.id, start=start, end=end,
                                                       granularity=86400))
         data.reverse()
         try:
@@ -87,7 +84,7 @@ def get_data_for_timespan(start: datetime, end: datetime, product):
         for row in data:
             if row == data[-1]:
                 break
-            y = {
+            row = {
                 "Product": product.id,
                 "Timestamp": row[0],
                 "Low": row[1],
@@ -97,19 +94,35 @@ def get_data_for_timespan(start: datetime, end: datetime, product):
                 "Volume": row[5]
             }
             try:
-                y.pop("_id", None)
-                db_coll.update_one({"Product": product.id, "Timestamp": y["Timestamp"]}, {"$set": y}, upsert=True)
+                db_coll.update_one({"Product": product.id, "Timestamp": row["Timestamp"]}, {"$set": row}, upsert=True)
             except Exception:
                 print("Reminder to make a db system completely from scratch")
-        data[-1]= {
-            "Product": product.id,
-            "Timestamp": datetime.datetime.combine(datetime.datetime.today(), datetime.time()).timestamp(),
-            "Low": data[-1]['low'],
-            "High": data[-1]['high'],
-            "Open": data[-1]['open'],
-            "Close": data[-1]['last'],
-            "Volume": data[-1]['volume']
-        }
+
+        dates=[]
+        for row in data:
+            try:
+                dates.append({
+                "Product": product.id,
+                "Timestamp": row[0],
+                "Low": row[1],
+                "High": row[2],
+                "Open": row[3],
+                "Close": row[4],
+                "Volume": row[5]
+            })
+            except Exception:
+                try:
+                    data[-1] = {
+                        "Product": product.id,
+                        "Timestamp": datetime.datetime.combine(datetime.datetime.today(), datetime.time()).timestamp(),
+                        "Low": float(data[-1]['low']),
+                        "High": float(data[-1]['high']),
+                        "Open": float(data[-1]['open']),
+                        "Close": float(data[-1]['last']),
+                        "Volume": float(data[-1]['volume'])
+                    }
+                except:
+                    pass
         try:
             mongo.close()
         except:
@@ -120,35 +133,11 @@ def get_data_for_timespan(start: datetime, end: datetime, product):
 # TODO get indicators to euro with best_route_to_euro of product
 def calculate_indicators(product: Product, **kwargs):
     try:
-        shortened_mfi = []
         days = 60
         better_start_date = fucking_date.now() - datetime.timedelta(days)
         better_end_date = fucking_date.now()
-        get_data_for_timespan(better_start_date, better_end_date, product)
-        shortened_mfi = client.get_product_historic_rates(product.id, start=better_start_date, end=better_end_date,
-                                                          granularity=86400)
-        try:
-            shortened_mfi.reverse()
-        except Exception as e:
-            print(e)
-        current_day_dataset = client.get_product_24hr_stats(product.id)
-        shortened_mfi[-1] = [
-            datetime.datetime.combine(datetime.datetime.today(), datetime.time()).timestamp(),
-            float(current_day_dataset["low"]),
-            float(current_day_dataset["high"]),
-            float(current_day_dataset["open"]),
-            float(current_day_dataset["last"]),
-            float(current_day_dataset["volume"]),
-        ]
-        shortened_better_data = {
-            "Product": product.id,
-            "Timestamp": [x[0] for x in shortened_mfi],
-            "Open": [x[3] for x in shortened_mfi],
-            "High": [x[2] for x in shortened_mfi],
-            "Low": [x[1] for x in shortened_mfi],
-            "Close": [x[4] for x in shortened_mfi],
-            "Volume": [x[5] for x in shortened_mfi],
-        }
+        shortened_better_data = get_data_for_timespan(better_start_date, better_end_date, product)
+
         # IMPORTANT TODO CALCULATE DATA FOR EVERY POSSIBLE RELATION IN A 3DIMENSIONAL ARRAY7
         complete_data = pd.DataFrame(shortened_better_data,
                                      columns=["Product", "Timestamp", "Open", "High", "Low", "Close", "Volume"])
@@ -157,24 +146,6 @@ def calculate_indicators(product: Product, **kwargs):
         product.calculated_indicators = all_indicators
         product.rsi = all_indicators["momentum_rsi"].values[-1]
 
-        mongo = MongoClient()
-        db = mongo["coinbase_history"]
-        try:
-            db.create_collection("calculated_product",
-                                 **{"_id": [("Product", pymongo.ASCENDING), ("Timestamp", pymongo.ASCENDING)]})
-        except Exception:
-            pass
-        finally:
-            db_coll = db["calculated_product"]
-            db_coll.create_index([("Product", pymongo.DESCENDING), ("Timestamp", pymongo.DESCENDING)], unique=True)
-        for idnex, row in all_indicators.iterrows():
-            y = row.to_dict()
-            try:
-                y.pop("_id", None)
-                db_coll.update_one({"Product": product.id, "Timestamp": y["Timestamp"]}, {"$set": y}, upsert=True)
-            except Exception:
-                print("Reminder to make a db system completely from scratch")
-        mongo.close()
     except Exception as e:
         print(f'couldn´t calculate data for {product.id}, due to lack of data')
 
