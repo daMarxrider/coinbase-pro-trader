@@ -82,7 +82,7 @@ def get_data_for_timespan(start: datetime, end: datetime, product):
             db_coll = db["historical_data"]
             db_coll.create_index([("Product", pymongo.DESCENDING), ("Timestamp", pymongo.DESCENDING)], unique=True)
         for row in data:
-            if row == data[-1]:
+            if 'low' in row:
                 break
             row = {
                 "Product": product.id,
@@ -147,19 +147,12 @@ def calculate_indicators(product: Product, **kwargs):
         product.rsi = all_indicators["momentum_rsi"].values[-1]
 
     except Exception as e:
-        print(f'couldn´t calculate data for {product.id}, due to lack of data')
+        pass
+        # print(f'couldn´t calculate data for {product.id}, due to lack of data')
 
 
 def get_history(f=calculate_indicators, **kwargs):
     global client, product_history, product_current_data, product_complete_data
-    mongo = MongoClient()
-    # mongo.get_database('coinbase_history')
-    try:
-        db = mongo["coinbase_history"]
-        db.create_collection("historic_data",
-                             **{"_id": [("Product", pymongo.ASCENDING), ("Timestamp", pymongo.ASCENDING)]})
-    except Exception:
-        pass
     granularity = 86400
 
     # from docs
@@ -174,7 +167,7 @@ def get_history(f=calculate_indicators, **kwargs):
             else:
                 p_history = []
             try:
-                start_date = (fucking_date.now() - datetime.timedelta(1000)
+                start_date = (fucking_date.now() - datetime.timedelta(300)
                               if len(p_history) == 0 else fucking_date.fromtimestamp(p_history[0]["data"][-1][0]))
                 end_date = start_date + datetime.timedelta(0, granularity * 300)
                 # calculate statistics for wanted data
@@ -192,16 +185,13 @@ def get_history(f=calculate_indicators, **kwargs):
                     else:
                         continue
 
-                data = client.get_product_historic_rates(product.id, start=start_date, end=end_date,
-                                                         granularity=granularity)
+                data = get_data_for_timespan(start_date,end_date,product)
 
                 if len(p_history) == 0 and len(data) > 1:
-                    data.reverse()
                     p_history = {"id": product.id, "data": data}
                     product_history.append(p_history)
                     # mongo.()
                 elif len(data) > 1:
-                    data.reverse()
                     p_history[0]["data"].extend(data)
             except Exception:
                 pass
