@@ -31,15 +31,16 @@ def get_data_for_timespan(start: datetime, end: datetime, product):
     dates, last_date = [], start.timestamp()
     data.reverse()
     # TODO get biggest diff of data to check if data is missing
+    wanted_index=0
     for i in range(0, len(data)):
         try:
-            # if abs(data[i]['Timestamp'] - wanted_dates[0]) > abs(data[i - 1]['Timestamp'] - wanted_dates[0]):
-            #     dates.append(data[i - 1])
-            #     wanted_dates.pop(0)
+            # check if wanted_dates is more than a half day below and upgrade accordingly
+            while fucking_date.fromtimestamp(wanted_dates[wanted_index])<fucking_date.fromtimestamp(data[i]['Timestamp'])-datetime.timedelta(0.5):
+                wanted_index+=1
             if abs((fucking_date.fromtimestamp(data[i]['Timestamp']) - fucking_date.fromtimestamp(
-                    wanted_dates[0])).total_seconds()) < 43200:
+                    wanted_dates[wanted_index])).total_seconds()) < 43200:
                 dates.append(data[i])
-                wanted_dates.pop(0)
+                wanted_dates.pop(wanted_index)
         except Exception as e:
             pass
     # if fucking_date.fromtimestamp(dates[-1]['Timestamp']).date()==fucking_date.fromtimestamp(wanted_dates[0]).date():
@@ -62,6 +63,8 @@ def get_data_for_timespan(start: datetime, end: datetime, product):
         dates.append(parsed_today)
         mongo.close()
         return dates
+    elif len(wanted_dates)==0:
+        return dates
     else:
         for i in range(0, wanted_dates.__len__()):
             wanted_dates[i] = fucking_date.fromtimestamp(wanted_dates[i]).date()
@@ -70,7 +73,7 @@ def get_data_for_timespan(start: datetime, end: datetime, product):
         if wanted_dates[-1] == fucking_date.now().date():
             wanted_dates.pop(-1)
             data.append(client.get_product_24hr_stats(product.id))
-        data.extend(client.get_product_historic_rates(product.id, start=start, end=end,
+        data.extend(client.get_product_historic_rates(product.id, start=wanted_dates[0], end=wanted_dates[-1],
                                                       granularity=86400))
         data.reverse()
         try:
@@ -98,7 +101,9 @@ def get_data_for_timespan(start: datetime, end: datetime, product):
             except Exception:
                 print("Reminder to make a db system completely from scratch")
 
-        dates=[]
+        temp_timestamps=[]
+        for temp_date in dates:
+            temp_timestamps.append(temp_date['Timestamp'])
         for row in data:
             try:
                 dates.append({
@@ -127,6 +132,7 @@ def get_data_for_timespan(start: datetime, end: datetime, product):
             mongo.close()
         except:
             pass
+        dates.sort(key=lambda x: x['Timestamp'])
         return dates
 
 
@@ -168,8 +174,8 @@ def get_history(f=calculate_indicators, **kwargs):
                 p_history = []
             try:
                 start_date = (fucking_date.now() - datetime.timedelta(300)
-                              if len(p_history) == 0 else fucking_date.fromtimestamp(p_history[0]["data"][-1][0]))
-                end_date = start_date + datetime.timedelta(0, granularity * 300)
+                              if len(p_history) == 0 else fucking_date.fromtimestamp(p_history[0]["data"][-1]['Timestamp']))
+                end_date = start_date + datetime.timedelta(0, granularity * 299)
                 # calculate statistics for wanted data
                 if (start_date > fucking_date.now() - datetime.timedelta(
                         1) or end_date > fucking_date.now() - datetime.timedelta(1)
@@ -203,10 +209,6 @@ def get_history(f=calculate_indicators, **kwargs):
                 except Exception:
                     pass
         print("history")
-        print([
-            x["id"] + "{}, newest timestamp {}\n".format(len(x["data"]), fucking_date.fromtimestamp(x["data"][-1][0]))
-            for x in product_history
-        ])
         print("rsi values")
         # Note:
         # sorted doesn´t change the original list
