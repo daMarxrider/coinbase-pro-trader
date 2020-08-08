@@ -1,5 +1,4 @@
 import sys
-import linecache
 from Controller import market_controller as market, wallet_controller as wallet
 
 products = []
@@ -27,31 +26,31 @@ def setup(indicators=[]):
         used_configs.append(trading_configs[1])
         try:
             for product in products:
-                votes=[]
+                votes = []
                 try:
                     for conf in used_configs:
                         for order in wallet.orders:
                             if order.quote_currency in product.id and order.base_currency in product.id:
-                                if order.status in ['pending', 'open']:#TODO check if date is old enough to start new transaction ~7days
+                                if order.status in ["pending", "open"]:  # TODO check if date is old enough to start new transaction ~7days
                                     continue
-                        if conf['buy'](product):
-                            if len(product.own_transactions) > 0 and product.own_transactions[-1].type == 'buy':
+                        if conf["buy"](product):
+                            if len(product.own_transactions) > 0 and product.own_transactions[-1].type == "buy":
                                 continue
                             votes.append("buy")
-                        elif conf['sell'](product):
-                            if len(product.own_transactions) > 0 and product.own_transactions[-1].type == 'sell':
+                        elif conf["sell"](product):
+                            if len(product.own_transactions) > 0 and product.own_transactions[-1].type == "sell":
                                 continue
                             votes.append("sell")
                         else:
                             votes.append("hold")
                     for action in set(votes):
-                        if 1/(len(votes)/votes.count(action))>0.70:
-                            getattr(wallet,action)(product)
+                        if 1 / (len(votes) / votes.count(action)) > 0.70:
+                            getattr(wallet, action)(product)
                 except Exception as e:
                     exc_type, exc_obj, tb = sys.exc_info()
                     f = tb.tb_frame
                     lineno = tb.tb_lineno
                     filename = f.f_code.co_filename
         except Exception as e:
-            print('error during market placement')
+            print("error during market placement")
             print(e)
