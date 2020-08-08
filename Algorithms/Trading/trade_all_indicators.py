@@ -8,7 +8,14 @@ trading_configs = [{
     "name": "momentum_rsi",
     "buy": lambda x: x.calculated_indicators["momentum_rsi"].values[-1] <= 33,
     "sell": lambda x: x.calculated_indicators["momentum_rsi"].values[-1] >= 66
-}]
+},
+{
+    "name": "trend_macd",
+    "buy": lambda x: x.calculated_indicators["trend_macd_diff"].values[-1] >= 0 \
+        and x.calculated_indicators["trend_macd_diff"].values[-2] < 0,
+    "sell": lambda x: x.calculated_indicators["trend_macd_diff"].values[-1] <= 0 \
+        and x.calculated_indicators["trend_macd_diff"].values[-2] > 0 
+}]]
 
 
 def setup(indicators=[]):
@@ -17,6 +24,7 @@ def setup(indicators=[]):
     while 1:
         used_configs = []
         used_configs.append(trading_configs[0])
+        used_configs.append(trading_configs[1])
         try:
             for product in products:
                 votes=[]
