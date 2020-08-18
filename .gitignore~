@@ -9,7 +9,7 @@ __pycache__/
 .vim/
 .__pycache__/
 .vimspector.json
-.idea/
+
 # C extensions
 *.so
 
