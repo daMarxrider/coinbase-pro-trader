@@ -1,12 +1,11 @@
+import datetime
+import dateutil.parser
+from Models.transaction import Transaction
+from Controller import client_controller
 import sys
 import math
 from cbpro import AuthenticatedClient
 sys.path
-from Controller import client_controller
-from Models.transaction import Transaction
-import dateutil.parser
-import datetime
-import sys
 
 max_trading_value = None
 wallets = []
@@ -14,19 +13,19 @@ orders = []
 client: AuthenticatedClient = None
 
 
-def hold(product):
+def hold(product, instant_resell=False):
     pass
 
 
-def buy(product):
-    execute_order("buy", product)
+def buy(product, instant_resell=False):
+    execute_order("buy", product, instant_resell=instant_resell)
 
 
-def sell(product):
-    execute_order("sell", product)
+def sell(product, instant_resell=False):
+    execute_order("sell", product, instant_resell=instant_resell)
 
 
-def execute_order(type, product, funds=None):
+def execute_order(type, product, funds=None, instant_resell=False, limit=None):
     try:
         if product.trading_disabled:
             return
@@ -41,24 +40,32 @@ def execute_order(type, product, funds=None):
         sorted(relevant_orders, key=lambda x: x['created_at'])
         if len(relevant_orders) > 0 and (type == 'buy' and float(relevant_orders[0]['amount']) > 0
                                          or type == 'sell' and float(relevant_orders[0]['amount']) < 0)\
-                                    and datetime.datetime.strptime(relevant_orders[0]['created_at'], "%Y-%m-%dT%H:%M:%S.%fZ")\
-                                        > (datetime.datetime.now() - datetime.timedelta(7)):
+                and datetime.datetime.strptime(relevant_orders[0]['created_at'], "%Y-%m-%dT%H:%M:%S.%fZ")\
+                > (datetime.datetime.now() - datetime.timedelta(7)):
             return
 
         if not product.min_transaction_size or funds > product.min_transaction_size:
-            if product.limit_only:
-                order = client.place_limit_order(product.id, type, product.rate, size=funds)
+            if product.limit_only or limit is not None:
+                order = client.place_limit_order(
+                    product.id, type, product.rate, size=funds)
             else:
                 order = client.place_market_order(product.id, type, size=funds)
             if 'message' not in order.keys():
                 # product.own_transactions.append(Transaction(product.id, '', '', type=type))
                 get_wallets()
+                if instant_resell:
+                    sell_type = 'sell' if type == 'buy' else 'buy'
+                    # TODO debug
+                    execute_order(type=sell_type, product=product,
+                                  funds=last_transaction_size, limit=last_price * 1.02)
                 return order
             if order['message'].__contains__('too accurate'):
                 decimals = len(order['message'].rstrip('0').split('.')[-1])
                 funds = funds * 0.99
-                funds = math.floor(funds * float(10**decimals)) / float(10**decimals)
-                execute_order(type, product, funds=funds.__round__(decimals))
+                funds = math.floor(funds * float(10**decimals)
+                                   ) / float(10**decimals)
+                execute_order(type, product, funds=funds.__round__(
+                    decimals), limit=limit)
             else:
                 pass
 
@@ -114,8 +121,10 @@ def get_wallets():
             elif order['type'] == 'transfer':
                 continue
             order = client.get_order(order['details']['order_id'])
-            base_currency = order['product_id'].split('-')[1] if order['side'] == 'buy' else order['product_id'].split('-')[0]
-            quote_currency = order['product_id'].split('-')[1] if order['side'] == 'sell' else order['product_id'].split('-')[0]
+            base_currency = order['product_id'].split(
+                '-')[1] if order['side'] == 'buy' else order['product_id'].split('-')[0]
+            quote_currency = order['product_id'].split(
+                '-')[1] if order['side'] == 'sell' else order['product_id'].split('-')[0]
             # TODO also add order to product.own_orders
             orders.append(
                 Transaction(order['id'],
@@ -124,7 +133,8 @@ def get_wallets():
                             product_id=order['product_id'],
                             fee=order['fill_fees'],
                             base_value=amount,
-                            quote_value=order['size'] if 'size' in dir(order) else '0',
+                            quote_value=order['size'] if 'size' in dir(
+                                order) else '0',
                             status=order['status'],
                             type=type,
                             executed_timestamp=dateutil.parser.isoparse(order['done_at'])))
