@@ -15,18 +15,6 @@ import Controller.history_controller as history
 import Algorithms.Prediction.cross_market_evaluation as cross_market_evaluation
 import Algorithms.Trading.trade_all_indicators as trader
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--max_value", "-m", type=float, help="set max trading value in euro")
-parser.add_argument("--system", "-s", help="the system-name from your yaml config that should be used")
-parser.add_argument("--algorithms",
-                    "-a",
-                    type=str,
-                    default=['rsi_based'],
-                    nargs='*',
-                    help="algorithms to be used. default algorithm is only rsi")
-args = parser.parse_args()
-configuration = []
-
 
 def configure():
     global configuration
@@ -58,6 +46,17 @@ def configure():
 
 def main():
     global pr
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--max_value", "-m", type=float, help="set max trading value in euro")
+    parser.add_argument("--system", "-s", help="the system-name from your yaml config that should be used")
+    parser.add_argument("--algorithms",
+                        "-a",
+                        type=str,
+                        default=['rsi_based'],
+                        nargs='*',
+                        help="algorithms to be used. default algorithm is only rsi")
+    args = parser.parse_args()
+    configuration = []
     configure()
     wallet.get_wallets()
     for w in wallet.wallets:
