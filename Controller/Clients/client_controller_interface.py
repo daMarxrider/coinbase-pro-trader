@@ -19,3 +19,6 @@ class Client_Controller(object):
 
     def get_product_24hr_stats(self,*args,**kwargs):
         raise NotImplementedError
+
+    def get_product_historic_rates(self,*args,**kwargs):
+        raise NotImplementedError

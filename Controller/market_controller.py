@@ -64,6 +64,9 @@ def init_products():
 
 
 def get_products_feed():
+    global client
+    if client is None:
+        client=client_controller.client
     init_products()
     if client_controller.type == "coinbase-pro":
         websocket.enableTrace(True)

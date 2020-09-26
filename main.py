@@ -9,7 +9,7 @@ import time
 
 from Controller import client_controller
 from Controller.Clients import client_controller_coinbase as cb_cli
-from Controller.Clients import client_controller_binance as binance_cli
+#from Controller.Clients import client_controller_binance as binance_cli
 import Controller.market_controller as market
 import Controller.wallet_controller as wallet
 import Controller.history_controller as history
@@ -46,8 +46,8 @@ def configure():
         else:
             system = [x for x in configuration if x['system']['name'] == systemname][0]
         configuration = system
-        cb_cli.setup_client(configuration)
-        client_controller.client = cb_cli.client
+        cb_cli.CbPro_Client.setup_client(configuration)
+        client_controller.client = cb_cli.CbPro_Client
         client_controller.type = "coinbase-pro"
 
 
