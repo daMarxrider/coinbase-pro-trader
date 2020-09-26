@@ -46,9 +46,9 @@ def execute_order(type, product, funds=None):
 
         if not product.min_transaction_size or funds > product.min_transaction_size:
             if product.limit_only:
-                order = client.place_limit_order(product.id, type, product.rate, size=funds)
+                order = client.place_order(product.id, type, product.rate, size=funds,limit=True)
             else:
-                order = client.place_market_order(product.id, type, size=funds)
+                order = client.place_order(product.id, type, size=funds)
             if 'message' not in order.keys():
                 # product.own_transactions.append(Transaction(product.id, '', '', type=type))
                 get_wallets()
