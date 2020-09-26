@@ -1,12 +1,11 @@
+import datetime
+import dateutil.parser
+from Models.transaction import Transaction
+from Controller import client_controller
 import sys
 import math
 from cbpro import AuthenticatedClient
 sys.path
-from Controller import client_controller
-from Models.transaction import Transaction
-import dateutil.parser
-import datetime
-import sys
 
 max_trading_value = None
 wallets = []
