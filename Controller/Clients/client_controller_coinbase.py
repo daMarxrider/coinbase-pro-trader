@@ -44,11 +44,12 @@ class CbPro_Client(Client_Controller):
         return wrapper
 
     def setup_client(config):
-        global client
+        global client,isWorking
         client = cbpro.AuthenticatedClient(config['system']['api_key'],
                                            config['system']['secret_key'],
                                            config['system']['passphrase'],
                                            api_url=config['system']['uri'])
+        isWorking = True
         setup_api_timeout()
         return client
 
@@ -59,3 +60,16 @@ class CbPro_Client(Client_Controller):
             return client.place_market_order(product_id, side, size=funds)
 
     def get_products(self,*args,**kwargs):
+        return client.get_products()
+
+    def get_accounts(self,*args,**kwargs):
+        return client.get_accounts(*args)
+
+    def get_account_history(self,*args,**kwargs):
+        return client.get_account_history(*args)
+
+    def get_order(self,*args,**kwargs):
+        return client.get_order(*args)
+
+    def get_product_24hr_stats(self,*args,**kwargs):
+        return client.get_product_24hr_stats(*args)

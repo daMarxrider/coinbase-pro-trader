@@ -1,4 +1,4 @@
-import cbpro
+from Controller import client_controller
 import websocket
 import _thread as thread
 import json
@@ -6,7 +6,7 @@ from Controller import fuck_json
 from Models.product import Product
 from Models.transaction import Transaction
 
-client = cbpro.PublicClient()
+client = client_controller.client
 products = []
 
 
@@ -65,10 +65,13 @@ def init_products():
 
 def get_products_feed():
     init_products()
-    websocket.enableTrace(True)
-    ws = websocket.WebSocketApp("wss://ws-feed.pro.coinbase.com/ticker", on_message=on_ticker_message, on_error=on_error, on_close=on_close)
-    ws.on_open = on_open
-    ws.run_forever()
+    if client_controller.type == "coinbase-pro":
+        websocket.enableTrace(True)
+        ws = websocket.WebSocketApp("wss://ws-feed.pro.coinbase.com/ticker", on_message=on_ticker_message, on_error=on_error, on_close=on_close)
+        ws.on_open = on_open
+        ws.run_forever()
+    else:
+        raise NotImplementedError
 
 
 def get_best_route_to_euro(inst_product):

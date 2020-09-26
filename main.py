@@ -7,7 +7,9 @@ import joblib
 from joblib import delayed
 import time
 
-from Controller import client_controller as cli
+from Controller import client_controller
+from Controller.Clients import client_controller_coinbase as cb_cli
+from Controller.Clients import client_controller_binance as binance_cli
 import Controller.market_controller as market
 import Controller.wallet_controller as wallet
 import Controller.history_controller as history
@@ -15,40 +17,46 @@ import Controller.history_controller as history
 import Algorithms.Prediction.cross_market_evaluation as cross_market_evaluation
 import Algorithms.Trading.trade_all_indicators as trader
 
+args = []
+
 
 def configure():
     global configuration
     wallet.max_trading_value = float(args.max_value)
-    if len(sys.argv) == 1:
-        systemname = 'prod'
-        systemuri = 'https://api.pro.coinbase.com'
-    else:
-        systemname = args.system
-        systemuri = 'https://api-public.sandbox.pro.coinbase.com'
-    filename = ('{}{}{}'.format(sys.path[0], os.sep, 'conf.yaml'))
-    if os.path.exists(filename):
-        configuration = yaml.load(open(filename, 'r'), Loader=yaml.Loader)
-    if len(configuration) == 0 or len([x for x in configuration if x['system']['name'] == systemname]) == 0:
-        system = {}
-        system['system'] = {}
-        system['system']['name'] = systemname
-        system['system']['uri'] = systemuri
-        system['system']['api_key'] = input('api_key:')
-        system['system']['secret_key'] = input('secret_key:')
-        system['system']['passphrase'] = input('passphrase:')
-        configuration.append(system)
-        yaml.dump(configuration, open(filename, 'w'))
-    else:
-        system = [x for x in configuration if x['system']['name'] == systemname][0]
-    configuration = system
-    cli.setup_client(configuration)
+    if args.exchange == 'coinbase-pro':
+        if len(sys.argv) == 1:
+            systemname = 'prod'
+            systemuri = 'https://api.pro.coinbase.com'
+        else:
+            systemname = args.system
+            systemuri = 'https://api-public.sandbox.pro.coinbase.com'
+        filename = ('{}{}{}'.format(sys.path[0], os.sep, 'conf.yaml'))
+        if os.path.exists(filename):
+            configuration = yaml.load(open(filename, 'r'), Loader=yaml.Loader)
+        if len(configuration) == 0 or len([x for x in configuration if x['system']['name'] == systemname]) == 0:
+            system = {}
+            system['system'] = {}
+            system['system']['name'] = systemname
+            system['system']['uri'] = systemuri
+            system['system']['api_key'] = input('api_key:')
+            system['system']['secret_key'] = input('secret_key:')
+            system['system']['passphrase'] = input('passphrase:')
+            configuration.append(system)
+            yaml.dump(configuration, open(filename, 'w'))
+        else:
+            system = [x for x in configuration if x['system']['name'] == systemname][0]
+        configuration = system
+        cb_cli.setup_client(configuration)
+        client_controller.client = cb_cli.client
+        client_controller.type = "coinbase-pro"
 
 
 def main():
-    global pr
+    global pr,args
     parser = argparse.ArgumentParser()
     parser.add_argument("--max_value", "-m", type=float, help="set max trading value in euro")
     parser.add_argument("--system", "-s", help="the system-name from your yaml config that should be used")
+    parser.add_argument("--exchange", "-e", help="The Exchange you are using.(e.g. Coinbase-Pro, Binance)")
     parser.add_argument("--algorithms",
                         "-a",
                         type=str,
