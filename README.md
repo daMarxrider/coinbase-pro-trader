@@ -1,3 +1,6 @@
+> [!NOTE]
+> **Archived.** Coinbase Pro has been shut down, so this bot no longer runs as-is. Its successor is [trading_bot_3](https://github.com/daMarxrider/trading_bot_3).
+
 # coinbase-pro-trader
 
 ## Why this bot
